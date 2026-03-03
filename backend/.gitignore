@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Build output
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
