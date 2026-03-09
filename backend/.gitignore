@@ -3,3 +3,4 @@ node_modules
 *.log
 test-*.js
 build-log.txt
+.vercel
