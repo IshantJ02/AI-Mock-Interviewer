@@ -10,14 +10,18 @@ const {
 // All interview routes require authentication
 router.use(authenticate);
 
+// ── Static routes MUST come before parameterized /:sessionId routes ──
+// Otherwise Express treats "execute", "start", etc. as a sessionId value.
 router.post('/start', startSession);
-router.post('/:sessionId/question', aiLimiter, getNextQuestion);
-router.post('/:sessionId/submit', aiLimiter, submitAnswer);
-router.post('/:sessionId/chat', aiLimiter, chat);
-router.post('/:sessionId/end', endSession);
 router.post('/execute', executionLimiter, runCode);
 router.post('/analyze', aiLimiter, analyzeCode);
 router.get('/sessions', getSessions);
 router.get('/sessions/:sessionId', getSession);
+
+// ── Parameterized session routes ──
+router.post('/:sessionId/question', aiLimiter, getNextQuestion);
+router.post('/:sessionId/submit', aiLimiter, submitAnswer);
+router.post('/:sessionId/chat', aiLimiter, chat);
+router.post('/:sessionId/end', endSession);
 
 module.exports = router;

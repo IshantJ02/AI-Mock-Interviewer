@@ -37,7 +37,7 @@ const authLimiter = rateLimit({
  */
 const executionLimiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 5,
+    max: 15,
     message: { success: false, message: 'Code execution rate limit exceeded.' },
 });
 

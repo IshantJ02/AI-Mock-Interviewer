@@ -1,9 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Space_Grotesk, Inter, Caveat } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700"],
+});
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-hand",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "NextUp.ai - Mock Interviewer",
@@ -18,17 +30,28 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans bg-gray-950 text-white antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${spaceGrotesk.variable} ${inter.variable} ${caveat.variable} font-sans antialiased`}
+        suppressHydrationWarning
+        style={{
+          background: '#faf8f4',
+          color: '#2d2926',
+          fontFamily: 'var(--font-inter), system-ui, sans-serif',
+        }}
+      >
         {children}
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: '#1a1a2e',
-              color: '#e2e8f0',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              borderRadius: '12px',
+              background: '#fffdf8',
+              color: '#2d2926',
+              border: '1px solid #e0dbd2',
+              borderRadius: '10px',
+              fontFamily: 'var(--font-inter)',
+              fontSize: '14px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
             },
           }}
         />

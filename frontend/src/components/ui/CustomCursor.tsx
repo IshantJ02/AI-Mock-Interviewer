@@ -2,7 +2,8 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Custom animated cursor with purple dot + ring
+ * Cozy cursor — soft pencil dot + gentle ring
+ * Warm, subtle, not aggressive
  */
 export default function CustomCursor() {
     const dotRef = useRef<HTMLDivElement>(null);
@@ -22,10 +23,10 @@ export default function CustomCursor() {
             }
         };
 
-        // Smooth ring following
+        // Smooth, lazy ring follow (like a lazy pen)
         const animateRing = () => {
-            ringX += (mouseX - ringX) * 0.12;
-            ringY += (mouseY - ringY) * 0.12;
+            ringX += (mouseX - ringX) * 0.1;
+            ringY += (mouseY - ringY) * 0.1;
 
             if (ringRef.current) {
                 ringRef.current.style.left = `${ringX}px`;
@@ -34,12 +35,14 @@ export default function CustomCursor() {
             requestAnimationFrame(animateRing);
         };
 
-        // Scale ring on hover
         const onMouseEnterInteractive = () => {
             if (ringRef.current) {
-                ringRef.current.style.width = '60px';
-                ringRef.current.style.height = '60px';
-                ringRef.current.style.borderColor = 'rgba(6, 182, 212, 0.8)';
+                ringRef.current.style.width = '48px';
+                ringRef.current.style.height = '48px';
+                ringRef.current.style.borderColor = 'rgba(124, 154, 110, 0.35)';
+            }
+            if (dotRef.current) {
+                dotRef.current.style.opacity = '0.5';
             }
         };
 
@@ -47,16 +50,18 @@ export default function CustomCursor() {
             if (ringRef.current) {
                 ringRef.current.style.width = '36px';
                 ringRef.current.style.height = '36px';
-                ringRef.current.style.borderColor = 'rgba(139, 92, 246, 0.5)';
+                ringRef.current.style.borderColor = 'rgba(45, 41, 38, 0.15)';
+            }
+            if (dotRef.current) {
+                dotRef.current.style.opacity = '0.7';
             }
         };
 
         window.addEventListener('mousemove', onMouseMove);
         animateRing();
 
-        // Attach to interactive elements
         const addHoverListeners = () => {
-            document.querySelectorAll('a, button, [data-cursor="pointer"]').forEach(el => {
+            document.querySelectorAll('a, button, [data-cursor="pointer"], input, select, textarea').forEach(el => {
                 el.addEventListener('mouseenter', onMouseEnterInteractive);
                 el.addEventListener('mouseleave', onMouseLeaveInteractive);
             });
@@ -72,7 +77,6 @@ export default function CustomCursor() {
         };
     }, []);
 
-    // Hide on mobile
     if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
         return null;
     }

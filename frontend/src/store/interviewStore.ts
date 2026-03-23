@@ -11,7 +11,15 @@ interface Question {
     hints?: string[];
     topic?: string;
     isBehavioral?: boolean;
+    starterCode?: Record<string, string>;
 }
+
+const DEFAULT_STARTERS: Record<string, string> = {
+    python: '# Write your solution here\n\ndef solution():\n    pass\n\n# Test\nprint(solution())\n',
+    javascript: '// Write your solution here\n\nfunction solution() {\n    return null;\n}\n\n// Test\nconsole.log(solution());\n',
+    cpp: '#include <iostream>\nusing namespace std;\n\nint solution() {\n    // Write your solution here\n    return 0;\n}\n\nint main() {\n    cout << solution() << endl;\n    return 0;\n}\n',
+    java: 'class Solution {\n    public static Object solve() {\n        // Write your solution here\n        return null;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(solve());\n    }\n}\n',
+};
 
 interface Feedback {
     score: number;
@@ -115,17 +123,19 @@ export const useInterviewStore = create<InterviewStore>((set, get) => ({
         set({ isAIThinking: true, currentFeedback: null });
         try {
             const { data } = await api.post(`/interview/${sessionId}/question`, { topic });
+            const q = data.data.question;
+            const lang = get().language;
+            const starterCode = q.starterCode?.[lang] || DEFAULT_STARTERS[lang] || DEFAULT_STARTERS.python;
             set({
-                currentQuestion: data.data.question,
+                currentQuestion: q,
                 currentQuestionIndex: data.data.questionIndex,
                 questionStartTime: new Date(),
                 isAIThinking: false,
-                code: '# Write your solution here\n\ndef solution():\n    pass\n',
+                code: starterCode,
                 status: 'active',
             });
 
             // Add AI message announcing the question
-            const q = data.data.question;
             const questionText = q.question || q.title || 'Here is your question.';
             set(state => ({
                 messages: [...state.messages, {
@@ -210,7 +220,11 @@ export const useInterviewStore = create<InterviewStore>((set, get) => ({
     },
 
     setCode: (code) => set({ code }),
-    setLanguage: (language) => set({ language }),
+    setLanguage: (language) => {
+        const { currentQuestion } = get();
+        const starterCode = currentQuestion?.starterCode?.[language] || DEFAULT_STARTERS[language] || DEFAULT_STARTERS.python;
+        set({ language, code: starterCode });
+    },
     setListening: (isListening) => set({ isListening }),
     setTranscript: (transcript) => set({ transcript }),
     reset: () => set(initialState),

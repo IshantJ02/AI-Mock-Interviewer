@@ -1,220 +1,191 @@
-const { v4: uuidv4 } = require('uuid');
+const { spawn, execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 /**
- * Docker-based code execution sandbox
- * 
- * Each piece of code runs in an isolated temporary Docker container with:
- * - Time limits (2 seconds max)
- * - Memory limits (64MB)
- * - No network access
- * - No filesystem persistence
- * - Auto-destroyed after execution
- * 
- * NOTE: Requires Docker to be installed and running on the server.
- * Falls back to a simulated execution if Docker is unavailable.
+ * Local Code Execution Service
+ *
+ * Executes code locally via child_process with:
+ *   - 10-second timeout
+ *   - Temp-file isolation (auto-cleaned)
+ *   - Support for Python, JavaScript (Node), C++, Java
+ *
+ * No external API required — runs directly on the host machine.
  */
 
-let Docker;
-let dockerAvailable = false;
+const TIMEOUT_MS = 10000; // 10 second execution timeout
 
-// Try to load dockerode - gracefully fail if not available
-try {
-    Docker = require('dockerode');
-    dockerAvailable = true;
-} catch (e) {
-    console.warn('⚠️  Dockerode not available. Code execution will be simulated.');
-}
+// ── Detect available runtimes on the system ──────────────────────────────────
+const commandExists = (cmd) => {
+    try {
+        if (os.platform() === 'win32') {
+            execSync(`where ${cmd}`, { stdio: 'pipe' });
+        } else {
+            execSync(`which ${cmd}`, { stdio: 'pipe' });
+        }
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+// Cache results so we only check once per process lifetime
+const _cache = {};
+const isAvailable = (cmd) => {
+    if (!(cmd in _cache)) _cache[cmd] = commandExists(cmd);
+    return _cache[cmd];
+};
+
+// Resolve the correct python command for this OS
+const getPythonCmd = () => {
+    if (isAvailable('python3')) return 'python3';
+    if (isAvailable('python'))  return 'python';
+    if (isAvailable('py'))      return 'py';
+    return null;
+};
 
 const LANGUAGE_CONFIGS = {
-    python: {
-        image: 'python:3.11-alpine',
-        filename: 'solution.py',
-        runCmd: ['python', 'solution.py'],
-        timeout: 10000, // ms to pull/start container
-    },
-    javascript: {
-        image: 'node:18-alpine',
-        filename: 'solution.js',
-        runCmd: ['node', 'solution.js'],
-        timeout: 10000,
-    },
-    cpp: {
-        image: 'gcc:latest',
-        filename: 'solution.cpp',
-        runCmd: ['sh', '-c', 'g++ -O2 -o solution solution.cpp && ./solution'],
-        timeout: 15000,
-    },
-    java: {
-        image: 'openjdk:17-alpine',
-        filename: 'Solution.java',
-        runCmd: ['sh', '-c', 'javac Solution.java && java -cp . Solution'],
-        timeout: 15000,
-    },
+    python:     { ext: '.py',   getCmd: getPythonCmd },
+    javascript: { ext: '.js',   getCmd: () => isAvailable('node') ? 'node' : null },
+    cpp:        { ext: '.cpp',  getCmd: () => isAvailable('g++')  ? 'g++' : null, compiled: true },
+    java:       { ext: '.java', getCmd: () => isAvailable('javac') ? 'javac' : null, compiled: true },
 };
 
 /**
- * Execute code in a Docker container sandbox
- * @param {string} code - Source code to execute
- * @param {string} language - Programming language (python|javascript|cpp|java)
- * @param {string} stdin - Standard input for the program
- * @returns {object} { output, error, exitCode, executionTime }
+ * Execute user code locally in an isolated temp directory
+ * @param {string} code     - Source code
+ * @param {string} language - python | javascript | cpp | java
+ * @param {string} stdin    - Optional standard input
+ * @returns {{ output, error, exitCode, executionTime }}
  */
 const executeCode = async (code, language, stdin = '') => {
     const startTime = Date.now();
-
-    if (!dockerAvailable) {
-        return simulateExecution(code, language, startTime);
-    }
-
     const config = LANGUAGE_CONFIGS[language];
+
     if (!config) {
-        return { output: '', error: `Language '${language}' not supported`, exitCode: 1, executionTime: 0 };
+        return { output: '', error: `Language '${language}' is not supported.`, exitCode: 1, executionTime: 0 };
     }
 
-    const docker = new Docker();
-    const containerId = `interview-${uuidv4()}`;
+    const runtimeCmd = config.getCmd();
+    if (!runtimeCmd) {
+        const installHint = {
+            python: 'Install Python from https://python.org',
+            javascript: 'Install Node.js from https://nodejs.org',
+            cpp: 'Install MinGW (g++) or MSYS2 for C++ compilation',
+            java: 'Install JDK from https://adoptium.net',
+        };
+        return {
+            output: '',
+            error: `${language} runtime not found on this system.\n${installHint[language] || ''}`,
+            exitCode: 1,
+            executionTime: 0,
+        };
+    }
+
+    // Create isolated temp directory
+    const tmpDir = path.join(os.tmpdir(), `interview-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
+    fs.mkdirSync(tmpDir, { recursive: true });
+
+    const filename = language === 'java' ? 'Solution.java' : `solution${config.ext}`;
+    const filepath = path.join(tmpDir, filename);
+    fs.writeFileSync(filepath, code, 'utf-8');
 
     try {
-        // Create container with strict security constraints
-        const container = await docker.createContainer({
-            name: containerId,
-            Image: config.image,
-            Cmd: config.runCmd,
-            AttachStdout: true,
-            AttachStderr: true,
-            StdinOnce: false,
-            NetworkDisabled: true,         // No internet access
-            HostConfig: {
-                Memory: 64 * 1024 * 1024,   // 64MB memory limit
-                MemorySwap: 64 * 1024 * 1024, // No swap
-                CpuPeriod: 100000,
-                CpuQuota: 50000,             // 50% of one CPU core
-                AutoRemove: true,            // Auto-destroy on exit
-                ReadonlyRootfs: false,       // Allow writing to /tmp
-                SecurityOpt: ['no-new-privileges'], // Prevent privilege escalation
-                Tmpfs: { '/tmp': 'rw,noexec,nosuid,size=32m' },
-                Ulimits: [
-                    { Name: 'nproc', Soft: 64, Hard: 64 }, // Limit processes
-                    { Name: 'fsize', Soft: 1024 * 1024, Hard: 1024 * 1024 }, // 1MB file size
-                ],
-            },
+        if (language === 'cpp') {
+            // Compile then run
+            const outName = os.platform() === 'win32' ? 'solution.exe' : 'solution';
+            const outpath = path.join(tmpDir, outName);
+            const compileResult = await runProcess('g++', ['-O2', '-std=c++17', '-o', outpath, filepath], tmpDir, '', TIMEOUT_MS);
+            if (compileResult.exitCode !== 0) {
+                return { output: '', error: compileResult.error || compileResult.output, exitCode: 1, executionTime: Date.now() - startTime };
+            }
+            const result = await runProcess(outpath, [], tmpDir, stdin, TIMEOUT_MS);
+            return { ...result, executionTime: Date.now() - startTime };
+
+        } else if (language === 'java') {
+            // Compile then run
+            const compileResult = await runProcess('javac', [filepath], tmpDir, '', TIMEOUT_MS);
+            if (compileResult.exitCode !== 0) {
+                return { output: '', error: compileResult.error || compileResult.output, exitCode: 1, executionTime: Date.now() - startTime };
+            }
+            const result = await runProcess('java', ['-cp', tmpDir, 'Solution'], tmpDir, stdin, TIMEOUT_MS);
+            return { ...result, executionTime: Date.now() - startTime };
+
+        } else {
+            // Interpreted: python / javascript
+            const result = await runProcess(runtimeCmd, [filepath], tmpDir, stdin, TIMEOUT_MS);
+            return { ...result, executionTime: Date.now() - startTime };
+        }
+
+    } catch (error) {
+        return { output: '', error: error.message || 'Execution failed', exitCode: 1, executionTime: Date.now() - startTime };
+    } finally {
+        // Cleanup temp files
+        try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+    }
+};
+
+/**
+ * Spawn a process, capture stdout/stderr, enforce timeout
+ */
+const runProcess = (cmd, args, cwd, stdin, timeout) => {
+    return new Promise((resolve, reject) => {
+        const proc = spawn(cmd, args, {
+            cwd,
+            stdio: ['pipe', 'pipe', 'pipe'],
+            windowsHide: true,
         });
 
-        // Copy code into container
-        const tar = require('tar-stream');
-        const pack = tar.pack();
-        pack.entry({ name: config.filename }, code);
-        pack.finalize();
+        let stdout = '';
+        let stderr = '';
 
-        await container.putArchive(pack, { path: '/app' });
-        await container.start();
+        proc.stdout.on('data', (d) => { stdout += d.toString(); });
+        proc.stderr.on('data', (d) => { stderr += d.toString(); });
 
-        // Collect output with timeout
-        const outputPromise = new Promise((resolve) => {
-            let stdout = '';
-            let stderr = '';
+        if (stdin) { proc.stdin.write(stdin); }
+        proc.stdin.end();
 
-            container.attach({ stream: true, stdout: true, stderr: true }, (err, stream) => {
-                if (err) { resolve({ stdout: '', stderr: err.message }); return; }
+        const timer = setTimeout(() => {
+            proc.kill('SIGKILL');
+            reject(new Error('⏱ Time Limit Exceeded (10s)'));
+        }, timeout);
 
-                container.modem.demuxStream(stream, {
-                    write: (chunk) => { stdout += chunk.toString(); },
-                }, {
-                    write: (chunk) => { stderr += chunk.toString(); },
-                });
-
-                stream.on('end', () => resolve({ stdout, stderr }));
+        proc.on('close', (code) => {
+            clearTimeout(timer);
+            resolve({
+                output: stdout.trim(),
+                error: stderr.trim(),
+                exitCode: code ?? 0,
             });
         });
 
-        // 2-second execution timeout
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Time Limit Exceeded (2s)')), 2000)
-        );
-
-        const { stdout, stderr } = await Promise.race([outputPromise, timeoutPromise]);
-        const executionTime = Date.now() - startTime;
-
-        // Clean up container if it's still running
-        try {
-            await container.stop({ t: 0 });
-        } catch { } // Already stopped
-
-        return {
-            output: stdout.trim(),
-            error: stderr.trim(),
-            exitCode: stderr ? 1 : 0,
-            executionTime,
-        };
-
-    } catch (error) {
-        const executionTime = Date.now() - startTime;
-
-        // Clean up container on error
-        try {
-            const docker2 = new Docker();
-            const c = docker2.getContainer(containerId);
-            await c.remove({ force: true });
-        } catch { }
-
-        return {
-            output: '',
-            error: error.message || 'Execution failed',
-            exitCode: 1,
-            executionTime,
-        };
-    }
+        proc.on('error', (err) => {
+            clearTimeout(timer);
+            reject(new Error(`Failed to start ${cmd}: ${err.message}`));
+        });
+    });
 };
 
 /**
- * Simulated execution for development (when Docker is not available)
- * Returns a mock result for demonstration purposes
- */
-const simulateExecution = (code, language, startTime) => {
-    const executionTime = Math.floor(Math.random() * 500) + 50;
-
-    // Simple Python print detection for demo
-    if (language === 'python') {
-        const printMatches = code.match(/print\((.+)\)/g);
-        if (printMatches) {
-            const output = `[Simulated] Code executed successfully. Contains ${printMatches.length} print statement(s).`;
-            return { output, error: '', exitCode: 0, executionTime, simulated: true };
-        }
-    }
-
-    return {
-        output: `[Simulated] ${language} code received and analyzed. Install Docker for actual execution.`,
-        error: '',
-        exitCode: 0,
-        executionTime,
-        simulated: true,
-    };
-};
-
-/**
- * Analyze code patterns locally (without Docker) for complexity estimation
+ * Analyze code patterns locally for complexity estimation
  */
 const analyzeCodePatterns = (code) => {
     const patterns = [];
 
-    // Detect nested loops
-    const nestedLoopRegex = /for|while/g;
-    const loopMatches = code.match(nestedLoopRegex) || [];
+    const loopMatches = code.match(/for|while/g) || [];
     if (loopMatches.length >= 2) patterns.push('nested-loops');
 
-    // Detect recursion (function calling itself - simplified check)
     if (/def\s+(\w+)[^:]+:[\s\S]*?\1\s*\(/.test(code) ||
         /function\s+(\w+)[^{]+{[\s\S]*?\1\s*\(/.test(code)) {
         patterns.push('recursion');
     }
 
-    // Detect sorting
     if (/\.sort\(|sorted\(|Arrays\.sort|Collections\.sort/.test(code)) {
         patterns.push('sorting');
     }
 
-    // Detect hash map usage
-    if (/dict\(|{|}|HashMap|unordered_map|Map\(/.test(code)) {
+    if (/dict\(|HashMap|unordered_map|Map\(/.test(code)) {
         patterns.push('hash-map');
     }
 

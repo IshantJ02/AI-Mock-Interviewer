@@ -2,9 +2,17 @@ const OpenAI = require('openai');
 
 // ── Hugging Face Inference API (OpenAI-compatible endpoint) ───────────────
 // Uses the same openai SDK, just pointed at HF's router
+if (!process.env.HF_API_KEY) {
+    console.error('\n⚠️  WARNING: HF_API_KEY is not set in .env file!');
+    console.error('   AI features (question generation, evaluation, chat) will NOT work.');
+    console.error('   Create a backend/.env file with: HF_API_KEY=hf_your_key_here\n');
+}
+
 const openai = new OpenAI({
-    apiKey: process.env.HF_API_KEY,
+    apiKey: process.env.HF_API_KEY || 'missing-key',
     baseURL: 'https://router.huggingface.co/v1',
+    timeout: 30000,       // 30s timeout to prevent hanging forever
+    maxRetries: 1,        // Only retry once on failure
 });
 
 // Confirmed working on HF router — fast, reliable, excellent JSON structured output
@@ -90,7 +98,14 @@ Topic: ${topic}
 Difficulty: ${difficulty}
 Previously asked topics (avoid repeating): ${previousTopics.join(', ') || 'None'}
 
-Respond ONLY with valid JSON in this exact format (no markdown, no extra text):
+IMPORTANT: Include "starterCode" with LeetCode-style function stubs for each language.
+Each stub MUST include:
+- The function signature with correct parameter names and types
+- A comment saying "Write your solution here"
+- A return placeholder (pass / return null / return 0 / etc.)
+- A small test driver that calls the function with the first example and prints the result
+
+Respond ONLY with valid JSON (no markdown, no extra text):
 {
   "title": "Problem title",
   "description": "Full problem description with context",
@@ -102,17 +117,28 @@ Respond ONLY with valid JSON in this exact format (no markdown, no extra text):
   "optimalComplexity": {"time": "O(?)", "space": "O(?)"},
   "hints": ["hint 1", "hint 2"],
   "tags": ["tag1", "tag2"],
-  "topic": "${topic}"
+  "topic": "${topic}",
+  "starterCode": {
+    "python": "def func_name(params):\\n    # Write your solution here\\n    pass\\n\\n# Test\\nprint(func_name(example_args))",
+    "javascript": "function funcName(params) {\\n    // Write your solution here\\n    return null;\\n}\\n\\n// Test\\nconsole.log(funcName(exampleArgs));",
+    "cpp": "#include <iostream>\\n#include <vector>\\nusing namespace std;\\n\\nreturnType funcName(params) {\\n    // Write your solution here\\n    return {};\\n}\\n\\nint main() {\\n    cout << funcName(exampleArgs) << endl;\\n    return 0;\\n}",
+    "java": "import java.util.*;\\n\\nclass Solution {\\n    public static returnType funcName(params) {\\n        // Write your solution here\\n        return null;\\n    }\\n\\n    public static void main(String[] args) {\\n        System.out.println(funcName(exampleArgs));\\n    }\\n}"
+  }
 }`;
 
-    const response = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.8,
-        max_tokens: 1200,
-    });
+    try {
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.8,
+            max_tokens: 2000,
+        });
 
-    return extractJSON(response.choices[0].message.content);
+        return extractJSON(response.choices[0].message.content);
+    } catch (error) {
+        console.error('generateQuestion AI error:', error.message);
+        throw new Error(`AI question generation failed: ${error.message}`);
+    }
 };
 
 /**
@@ -149,14 +175,19 @@ Evaluate this solution comprehensively. Respond ONLY with valid JSON (no markdow
   "followUpQuestion": "A follow-up question to probe deeper understanding"
 }`;
 
-    const response = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 800,
-    });
+    try {
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.3,
+            max_tokens: 800,
+        });
 
-    return extractJSON(response.choices[0].message.content);
+        return extractJSON(response.choices[0].message.content);
+    } catch (error) {
+        console.error('evaluateCode AI error:', error.message);
+        throw new Error(`AI evaluation failed: ${error.message}`);
+    }
 };
 
 /**
@@ -188,14 +219,19 @@ Respond ONLY with valid JSON (no markdown, no extra text):
   "followUpQuestion": "A follow-up question to dig deeper"
 }`;
 
-    const response = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 700,
-    });
+    try {
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.3,
+            max_tokens: 700,
+        });
 
-    return extractJSON(response.choices[0].message.content);
+        return extractJSON(response.choices[0].message.content);
+    } catch (error) {
+        console.error('evaluateBehavioral AI error:', error.message);
+        throw new Error(`AI behavioral evaluation failed: ${error.message}`);
+    }
 };
 
 /**
@@ -216,14 +252,19 @@ Respond ONLY with valid JSON (no markdown, no extra text):
   "idealAnswerHints": ["hint 1", "hint 2"]
 }`;
 
-    const response = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.8,
-        max_tokens: 400,
-    });
+    try {
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.8,
+            max_tokens: 400,
+        });
 
-    return extractJSON(response.choices[0].message.content);
+        return extractJSON(response.choices[0].message.content);
+    } catch (error) {
+        console.error('generateBehavioralQuestion AI error:', error.message);
+        throw new Error(`AI behavioral question generation failed: ${error.message}`);
+    }
 };
 
 /**
@@ -241,17 +282,22 @@ Context: ${context}
 You are conducting a live interview. Stay in character. Ask probing follow-up questions,
 provide hints if asked, and guide the candidate through the problem. Keep responses concise (2-4 sentences max).`;
 
-    const response = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [
-            { role: 'system', content: systemPrompt },
-            ...messages,
-        ],
-        temperature: 0.7,
-        max_tokens: 300,
-    });
+    try {
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                ...messages,
+            ],
+            temperature: 0.7,
+            max_tokens: 300,
+        });
 
-    return response.choices[0].message.content;
+        return response.choices[0].message.content;
+    } catch (error) {
+        console.error('chatWithInterviewer AI error:', error.message);
+        throw new Error(`AI chat failed: ${error.message}`);
+    }
 };
 
 /**
@@ -274,14 +320,19 @@ Respond ONLY with valid JSON (no markdown, no extra text):
   "suggestions": ["optimization suggestion 1"]
 }`;
 
-    const response = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.1,
-        max_tokens: 400,
-    });
+    try {
+        const response = await openai.chat.completions.create({
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.1,
+            max_tokens: 400,
+        });
 
-    return extractJSON(response.choices[0].message.content);
+        return extractJSON(response.choices[0].message.content);
+    } catch (error) {
+        console.error('analyzeComplexity AI error:', error.message);
+        throw new Error(`AI complexity analysis failed: ${error.message}`);
+    }
 };
 
 module.exports = {
