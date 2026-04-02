@@ -16,7 +16,7 @@ import {
 const HeroBackground = dynamic(() => import('@/components/three/HeroBackground'), { ssr: false });
 
 const COMPANY_MODES = [
-  { name: 'Google', icon: '🔍', accent: '#5a8f4c', desc: 'Optimization & edge cases mastery', traits: ['Hard algorithms', 'Big-O proof', 'System Design'] },
+  { name: 'Google', icon: '🔍', accent: 'var(--accent)', desc: 'Optimization & edge cases mastery', traits: ['Hard algorithms', 'Big-O proof', 'System Design'] },
   { name: 'Amazon', icon: '📦', accent: '#c08a4f', desc: 'Leadership principles + scalability', traits: ['LP questions', 'Scalable design', 'Real-world impact'] },
   { name: 'Meta', icon: '⚡', accent: '#6a7fa8', desc: 'Product thinking at scale', traits: ['Social scale', 'Product intuition', 'Data structures'] },
   { name: 'Startup', icon: '🚀', accent: '#b07070', desc: 'Ship fast, practical trade-offs', traits: ['Pragmatic code', 'Full-stack', 'Product sense'] },
@@ -95,8 +95,8 @@ export default function HomePage() {
         </motion.div>
 
         {/* Subtle warm blobs */}
-        <div className="blob w-[400px] h-[400px] top-20 -right-20" style={{ background: '#c4d8b8', opacity: 0.15 }} />
-        <div className="blob w-[350px] h-[350px] bottom-20 -left-20" style={{ background: '#e8d0b0', opacity: 0.12, animationDelay: '6s' }} />
+        <div className="blob w-[400px] h-[400px] top-20 -right-20" style={{ background: 'rgba(124,154,110,0.15)', opacity: 0.15 }} />
+        <div className="blob w-[350px] h-[350px] bottom-20 -left-20" style={{ background: 'rgba(212,165,116,0.12)', opacity: 0.12, animationDelay: '6s' }} />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-24 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -110,7 +110,7 @@ export default function HomePage() {
                 style={{
                   background: 'rgba(124, 154, 110, 0.08)',
                   border: '1px solid rgba(124, 154, 110, 0.15)',
-                  color: '#5a7e4c',
+                  color: 'var(--accent)',
                 }}
               >
                 <Coffee size={14} />
@@ -134,7 +134,7 @@ export default function HomePage() {
               >
                 Ace Your
                 <br />
-                <span className="hand-underline" style={{ color: '#5a7e4c' }}>{typedText}</span>
+                <span className="hand-underline" style={{ color: 'var(--accent)' }}>{typedText}</span>
                 <span className="animate-pulse" style={{ color: 'var(--accent)', fontWeight: 300 }}>|</span>
               </motion.h1>
 
@@ -277,7 +277,7 @@ export default function HomePage() {
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1] mt-2"
                 style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                 Train for{' '}
-                <span className="hand-underline" style={{ color: '#5a7e4c' }}>Any Company</span>
+                <span className="hand-underline" style={{ color: 'var(--accent)' }}>Any Company</span>
               </h2>
             </motion.div>
             <motion.div
@@ -419,7 +419,7 @@ export default function HomePage() {
 
       {/* ── DSA Topics ───────────────────────────────────────── */}
       <section className="py-24 px-6 relative overflow-hidden">
-        <div className="blob w-[400px] h-[400px] top-10 right-0" style={{ background: '#d4e5ca', opacity: 0.1 }} />
+        <div className="blob w-[400px] h-[400px] top-10 right-0" style={{ background: 'rgba(124,154,110,0.12)', opacity: 0.1 }} />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -472,7 +472,7 @@ export default function HomePage() {
               className="lg:col-span-5"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm mb-6"
-                style={{ background: 'rgba(124,154,110,0.08)', border: '1px solid rgba(124,154,110,0.12)', color: '#5a7e4c' }}>
+                style={{ background: 'rgba(124,154,110,0.08)', border: '1px solid rgba(124,154,110,0.12)', color: 'var(--accent)' }}>
                 <Terminal size={13} />
                 Docker Sandbox · 2s Timeout
               </div>
@@ -559,7 +559,7 @@ export default function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-2"
               style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
               Loved by{' '}
-              <span className="hand-underline" style={{ color: '#5a7e4c' }}>Engineers</span>
+              <span className="hand-underline" style={{ color: 'var(--accent)' }}>Engineers</span>
             </h2>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -612,8 +612,8 @@ export default function HomePage() {
             className="paper-card rounded-3xl p-14 relative overflow-hidden text-center"
             style={{ transform: 'rotate(0.3deg)' }}
           >
-            <div className="blob w-[250px] h-[250px] top-0 left-0" style={{ background: '#c4d8b8', opacity: 0.1 }} />
-            <div className="blob w-[250px] h-[250px] bottom-0 right-0" style={{ background: '#e8d0b0', opacity: 0.1, animationDelay: '5s' }} />
+            <div className="blob w-[250px] h-[250px] top-0 left-0" style={{ background: 'rgba(124,154,110,0.15)', opacity: 0.1 }} />
+            <div className="blob w-[250px] h-[250px] bottom-0 right-0" style={{ background: 'rgba(212,165,116,0.12)', opacity: 0.1, animationDelay: '5s' }} />
             <div className="relative z-10">
               <div className="text-5xl mb-5">📖</div>
               <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.3rem', color: 'var(--warm)' }}>
@@ -622,7 +622,7 @@ export default function HomePage() {
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 mt-3"
                 style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                 Ready to Land Your{' '}
-                <span className="hand-underline" style={{ color: '#5a7e4c' }}>Dream Job?</span>
+                <span className="hand-underline" style={{ color: 'var(--accent)' }}>Dream Job?</span>
               </h2>
               <p className="mb-10 max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
                 Join thousands of engineers who used NextUp.ai to prepare for and land offers at top tech companies.

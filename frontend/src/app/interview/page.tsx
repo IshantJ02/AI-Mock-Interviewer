@@ -31,7 +31,7 @@ const TOPICS_LIST = [
 ];
 
 const MODE_COLORS: Record<string, string> = {
-    General: 'var(--accent)', Google: '#5a8f4c', Amazon: '#c08a4f', Meta: '#6a7fa8', Startup: '#b07070',
+    General: 'var(--accent)', Google: 'var(--accent)', Amazon: '#c08a4f', Meta: '#6a7fa8', Startup: '#b07070',
 };
 const MODE_EMOJI: Record<string, string> = {
     General: '🎯', Google: '🔍', Amazon: '📦', Meta: '⚡', Startup: '🚀',
@@ -146,7 +146,7 @@ export default function InterviewPage() {
         return (
             <main className="min-h-screen pt-24 px-4 pb-12 relative overflow-hidden" style={{ background: 'var(--bg)' }}>
                 <div className="absolute inset-0 dot-bg opacity-20" />
-                <div className="blob w-[350px] h-[350px] top-20 right-20" style={{ background: '#c4d8b8', opacity: 0.1 }} />
+                <div className="blob w-[350px] h-[350px] top-20 right-20" style={{ background: 'rgba(124,154,110,0.15)', opacity: 0.1 }} />
                 <div className="max-w-4xl mx-auto relative z-10">
                     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={gentleSpring} className="mb-12">
                         <Link href="/dashboard" className="btn-tactile inline-flex items-center gap-2 text-sm mb-6 px-3 py-1.5 rounded-lg transition-all"
@@ -156,7 +156,7 @@ export default function InterviewPage() {
                         <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: 'var(--warm)' }}>set up your session 📝</span>
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2"
                             style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
-                            <span className="hand-underline" style={{ color: '#5a7e4c' }}>Configure</span> Your Interview
+                            <span className="hand-underline" style={{ color: 'var(--accent)' }}>Configure</span> Your Interview
                         </h1>
                     </motion.div>
 
@@ -317,7 +317,7 @@ export default function InterviewPage() {
                         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...gentleSpring, delay: 0.2 }}
                             className="text-6xl mb-6">🏆</motion.div>
                         <h2 className="text-4xl font-bold tracking-tight mb-2"
-                            style={{ fontFamily: 'var(--font-heading)', color: '#5a7e4c' }}>Interview Complete!</h2>
+                            style={{ fontFamily: 'var(--font-heading)', color: 'var(--accent)' }}>Interview Complete!</h2>
                         <p className="mb-8" style={{ color: 'var(--text-muted)' }}>Great job pushing through. Here&apos;s your performance summary.</p>
                         <div className="relative w-36 h-36 mx-auto mb-4">
                             <svg className="w-full h-full score-ring" viewBox="0 0 100 100">
@@ -332,7 +332,7 @@ export default function InterviewPage() {
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-                                    className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: sessionScore >= 70 ? '#5a7e4c' : sessionScore >= 50 ? 'var(--warm)' : 'var(--danger)' }}>
+                                    className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: sessionScore >= 70 ? 'var(--accent)' : sessionScore >= 50 ? 'var(--warm)' : 'var(--danger)' }}>
                                     {sessionScore}
                                 </motion.span>
                                 <span className="text-xs" style={{ color: 'var(--text-light)' }}>/100</span>
@@ -387,7 +387,7 @@ export default function InterviewPage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                         <Trophy size={13} style={{ color: 'var(--warm)' }} />
-                        <span className="font-bold" style={{ color: '#5a7e4c' }}>{sessionScore}/100</span>
+                        <span className="font-bold" style={{ color: 'var(--accent)' }}>{sessionScore}/100</span>
                     </div>
                     <button onClick={() => setShowEndConfirm(true)}
                         className="btn-tactile px-4 py-2 rounded-lg text-xs font-semibold"
@@ -403,7 +403,7 @@ export default function InterviewPage() {
                     <button key={panel} onClick={() => setMobilePanel(panel)}
                         className="flex-1 py-2.5 text-xs font-semibold capitalize transition-all"
                         style={{
-                            color: mobilePanel === panel ? '#5a7e4c' : 'var(--text-light)',
+                            color: mobilePanel === panel ? 'var(--accent)' : 'var(--text-light)',
                             borderBottom: mobilePanel === panel ? '2px solid var(--accent)' : '2px solid transparent',
                             background: mobilePanel === panel ? 'rgba(124,154,110,0.04)' : 'transparent',
                         }}>
@@ -420,7 +420,7 @@ export default function InterviewPage() {
                             <button key={tab} onClick={() => setActiveTab(tab as 'problem' | 'feedback')}
                                 className="flex-1 py-3 text-xs font-semibold capitalize transition-all"
                                 style={{
-                                    color: activeTab === tab ? '#5a7e4c' : 'var(--text-light)',
+                                    color: activeTab === tab ? 'var(--accent)' : 'var(--text-light)',
                                     borderBottom: activeTab === tab ? '2px solid var(--accent)' : '2px solid transparent',
                                 }}>
                                 {tab === 'problem' ? '📋 Problem' : '📊 AI Feedback'}
@@ -449,7 +449,7 @@ export default function InterviewPage() {
                                                         <div key={i} className="rounded-lg p-3 font-mono text-xs"
                                                             style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
                                                             <div><span style={{ color: 'var(--text-light)' }}>Input:</span> <span style={{ color: 'var(--accent)' }}>{ex.input}</span></div>
-                                                            <div><span style={{ color: 'var(--text-light)' }}>Output:</span> <span style={{ color: '#5a7e4c' }}>{ex.output}</span></div>
+                                                            <div><span style={{ color: 'var(--text-light)' }}>Output:</span> <span style={{ color: 'var(--accent)' }}>{ex.output}</span></div>
                                                             {ex.explanation && <div style={{ color: 'var(--text-muted)' }} className="mt-1">{ex.explanation}</div>}
                                                         </div>
                                                     ))}
@@ -485,16 +485,16 @@ export default function InterviewPage() {
                                             <div className="flex items-center justify-between p-4 rounded-xl"
                                                 style={{ background: 'rgba(124,154,110,0.05)', border: '1px solid rgba(124,154,110,0.1)' }}>
                                                 <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>Overall Score</span>
-                                                <span className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: '#5a7e4c' }}>
+                                                <span className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: 'var(--accent)' }}>
                                                     {currentFeedback.score}<span className="text-base" style={{ color: 'var(--text-light)' }}>/100</span>
                                                 </span>
                                             </div>
                                             {currentFeedback.timeComplexity && (
                                                 <div className="grid grid-cols-2 gap-2">
                                                     {[
-                                                        { label: 'Your Time', val: currentFeedback.timeComplexity, color: '#5a7e4c' },
+                                                        { label: 'Your Time', val: currentFeedback.timeComplexity, color: 'var(--accent)' },
                                                         { label: 'Optimal Time', val: currentFeedback.optimalTimeComplexity, color: 'var(--accent)' },
-                                                        { label: 'Your Space', val: currentFeedback.spaceComplexity, color: '#5a7e4c' },
+                                                        { label: 'Your Space', val: currentFeedback.spaceComplexity, color: 'var(--accent)' },
                                                         { label: 'Optimal Space', val: currentFeedback.optimalSpaceComplexity, color: 'var(--accent)' },
                                                     ].map(({ label, val, color }) => (
                                                         <div key={label} className="rounded-lg p-3 text-center" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
@@ -727,7 +727,7 @@ export default function InterviewPage() {
                             <div className="flex items-center justify-center gap-2 mb-6 px-4 py-2 rounded-lg"
                                 style={{ background: 'rgba(124,154,110,0.05)', border: '1px solid rgba(124,154,110,0.1)' }}>
                                 <Trophy size={14} style={{ color: 'var(--warm)' }} />
-                                <span className="text-sm font-bold" style={{ color: '#5a7e4c' }}>Current Score: {sessionScore}/100</span>
+                                <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>Current Score: {sessionScore}/100</span>
                                 <span className="text-xs" style={{ color: 'var(--text-light)' }}>· {formatTime(elapsedTime)}</span>
                             </div>
                             <div className="flex gap-3">

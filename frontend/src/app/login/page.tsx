@@ -29,8 +29,8 @@ export default function LoginPage() {
         <main className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
             style={{ background: 'var(--bg)' }}>
             <div className="absolute inset-0 dot-bg opacity-30" />
-            <div className="blob w-[400px] h-[400px] bottom-0 right-0" style={{ background: '#c4d8b8', opacity: 0.12 }} />
-            <div className="blob w-[350px] h-[350px] top-0 left-0" style={{ background: '#e8d0b0', opacity: 0.1, animationDelay: '3s' }} />
+            <div className="blob w-[400px] h-[400px] bottom-0 right-0" style={{ background: 'rgba(124,154,110,0.15)', opacity: 0.12 }} />
+            <div className="blob w-[350px] h-[350px] top-0 left-0" style={{ background: 'rgba(212,165,116,0.12)', opacity: 0.1, animationDelay: '3s' }} />
 
             <motion.div
                 initial={{ opacity: 0, y: 30 }}

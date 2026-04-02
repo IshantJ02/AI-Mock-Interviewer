@@ -142,13 +142,13 @@ export default function DashboardPage() {
         date: new Date(s.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }), score: s.score,
     }));
 
-    const modeColors: Record<string, string> = { Google: '#5a8f4c', Amazon: '#c08a4f', Meta: '#6a7fa8', Startup: '#b07070' };
+    const modeColors: Record<string, string> = { Google: 'var(--accent)', Amazon: '#c08a4f', Meta: '#6a7fa8', Startup: '#b07070' };
 
     return (
         <main className="min-h-screen pb-12 relative overflow-hidden" style={{ background: 'var(--bg)' }}>
             <Navbar />
             <div className="absolute inset-0 dot-bg opacity-10" />
-            <div className="blob w-[400px] h-[400px] top-0 right-0" style={{ background: '#c4d8b8', opacity: 0.08 }} />
+            <div className="blob w-[400px] h-[400px] top-0 right-0" style={{ background: 'rgba(124,154,110,0.15)', opacity: 0.08 }} />
 
             <div className="max-w-7xl mx-auto px-6 pt-28 relative z-10">
                 {/* Header */}
@@ -157,7 +157,7 @@ export default function DashboardPage() {
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-1"
                             style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
-                            Welcome back, <span className="hand-underline" style={{ color: '#5a7e4c' }}>{user?.name || 'Coder'}</span> 👋
+                            Welcome back, <span className="hand-underline" style={{ color: 'var(--accent)' }}>{user?.name || 'Coder'}</span> 👋
                         </h1>
                         <p style={{ color: 'var(--text-muted)' }}>Track your progress and crush your next interview</p>
                     </div>
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                                     <XAxis dataKey="date" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
                                     <YAxis domain={[0, 100]} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
                                     <Tooltip contentStyle={{ background: 'var(--paper)', border: '1px solid var(--border)', borderRadius: 10, color: 'var(--text-primary)', fontSize: 12 }} />
-                                    <Line type="monotone" dataKey="score" stroke="var(--accent)" strokeWidth={2} dot={{ fill: 'var(--accent)', r: 3 }} activeDot={{ r: 5, fill: '#5a7e4c' }} />
+                                    <Line type="monotone" dataKey="score" stroke="var(--accent)" strokeWidth={2} dot={{ fill: 'var(--accent)', r: 3 }} activeDot={{ r: 5, fill: 'var(--accent)' }} />
                                 </LineChart>
                             </ResponsiveContainer>
                         ) : (

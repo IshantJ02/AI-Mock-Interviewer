@@ -109,7 +109,7 @@ export default function HeroBackground() {
             const ch = canvas.height;
 
             // Subtle notebook grid dots
-            ctx.fillStyle = 'rgba(45, 41, 38, 0.035)';
+            ctx.fillStyle = 'rgba(240, 242, 245, 0.025)';
             for (let x = 30; x < cw; x += 28) {
                 for (let y = 30; y < ch; y += 28) {
                     ctx.beginPath();

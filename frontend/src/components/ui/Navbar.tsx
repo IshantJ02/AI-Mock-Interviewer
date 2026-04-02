@@ -34,18 +34,18 @@ export default function Navbar() {
         >
             <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3.5"
                 style={{
-                    background: 'rgba(250, 248, 244, 0.85)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid var(--border)',
-                    borderRadius: '14px',
-                    boxShadow: '0 2px 12px rgba(0,0,0,0.03)',
+                    background: 'rgba(15, 17, 21, 0.75)',
+                    backdropFilter: 'blur(16px) saturate(1.4)',
+                    border: '1px solid rgba(124, 154, 110, 0.12)',
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)',
                 }}
             >
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2.5 group">
                     <div className="relative w-8 h-8">
                         <div className="relative w-8 h-8 rounded-lg flex items-center justify-center"
-                            style={{ background: 'var(--accent)' }}>
+                            style={{ background: 'var(--accent)', boxShadow: '0 0 12px rgba(124,154,110,0.3)' }}>
                             <Brain size={16} className="text-white" />
                         </div>
                     </div>
@@ -63,9 +63,9 @@ export default function Navbar() {
                             href={href}
                             className="btn-tactile flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all"
                             style={{
-                                background: pathname === href ? 'rgba(124, 154, 110, 0.1)' : 'transparent',
-                                color: pathname === href ? '#5a7e4c' : 'var(--text-muted)',
-                                border: pathname === href ? '1px solid rgba(124, 154, 110, 0.2)' : '1px solid transparent',
+                                background: pathname === href ? 'var(--accent-light)' : 'transparent',
+                                color: pathname === href ? 'var(--accent)' : 'var(--text-muted)',
+                                border: pathname === href ? '1px solid rgba(124, 154, 110, 0.25)' : '1px solid transparent',
                             }}
                         >
                             <Icon size={15} />
@@ -91,7 +91,7 @@ export default function Navbar() {
                                 onClick={handleLogout}
                                 className="btn-tactile flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all"
                                 style={{ color: 'var(--text-muted)' }}
-                                onMouseEnter={e => { e.currentTarget.style.color = 'var(--danger)'; e.currentTarget.style.background = 'rgba(192,84,79,0.06)'; }}
+                                onMouseEnter={e => { e.currentTarget.style.color = 'var(--danger)'; e.currentTarget.style.background = 'var(--danger-light)'; }}
                                 onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
                             >
                                 <LogOut size={15} />
@@ -108,7 +108,7 @@ export default function Navbar() {
                                 className="btn-tactile flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-white"
                                 style={{
                                     background: 'var(--accent)',
-                                    boxShadow: '0 2px 10px rgba(124,154,110,0.15)',
+                                    boxShadow: '0 2px 16px rgba(124,154,110,0.25)',
                                 }}>
                                 <Sparkles size={13} />
                                 Get Started
@@ -133,7 +133,7 @@ export default function Navbar() {
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                     className="mt-2 mx-4 p-4 space-y-2 md:hidden"
                     style={{
-                        background: 'rgba(255, 253, 248, 0.95)',
+                        background: 'rgba(22, 24, 29, 0.95)',
                         backdropFilter: 'blur(16px)',
                         border: '1px solid var(--border)',
                         borderRadius: '14px',
