@@ -13,8 +13,8 @@ COPY . .
 # ── Stage 2: Production ───────────────────────────────────────────
 FROM node:18-alpine AS production
 
-# Install Docker CLI for sandbox execution
-RUN apk add --no-cache docker-cli
+# Install Docker CLI for sandbox execution and runtimes for code execution
+RUN apk add --no-cache docker-cli python3 g++ openjdk17-jdk
 
 WORKDIR /app
 
