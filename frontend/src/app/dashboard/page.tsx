@@ -14,7 +14,7 @@ import Navbar from '@/components/ui/Navbar';
 import {
     Brain, Code2, TrendingUp, Target, Zap, Trophy,
     AlertTriangle, CheckCircle2, ArrowRight, Loader2,
-    Calendar, Clock, BarChart2, Sparkles, ChevronRight
+    Calendar, Clock, BarChart2, Sparkles, ChevronRight, RotateCcw
 } from 'lucide-react';
 
 interface DashboardData {
@@ -59,6 +59,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [sessions, setSessions] = useState<Array<{ _id: string; createdAt: string; mode: string; difficulty: string; type: string; overallScore: number; status: string; duration: number }>>([]);
 
     useEffect(() => {
@@ -68,6 +69,7 @@ export default function DashboardPage() {
 
     const fetchDashboard = async () => {
         setLoading(true);
+        setError(null);
         try {
             const [statsRes, heatmapRes, sessionsRes] = await Promise.all([
                 api.get('/dashboard/stats'),
@@ -82,7 +84,10 @@ export default function DashboardPage() {
                 recommendations: statsRes.data.data.recommendations,
             });
             setSessions(sessionsRes.data.data.sessions || []);
-        } catch (err) { console.error('Dashboard fetch error:', err); }
+        } catch (err) {
+            console.error('Dashboard fetch error:', err);
+            setError('Failed to load dashboard data. Please check your connection and try again.');
+        }
         finally { setLoading(false); }
     };
 
@@ -93,6 +98,36 @@ export default function DashboardPage() {
                 <div className="text-center">
                     <Loader2 size={36} className="animate-spin mx-auto mb-4" style={{ color: '#7c9a6e' }} />
                     <p style={{ color: '#9e9790' }}>Loading your dashboard...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf8f4' }}>
+                <Navbar />
+                <div className="text-center max-w-md mx-auto px-4">
+                    <div className="paper-card rounded-2xl p-10">
+                        <div className="w-16 h-16 rounded-xl mx-auto mb-5 flex items-center justify-center"
+                            style={{ background: 'rgba(192,84,79,0.08)', border: '1px solid rgba(192,84,79,0.15)' }}>
+                            <AlertTriangle size={28} style={{ color: '#c0544f' }} />
+                        </div>
+                        <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>Something went wrong</h2>
+                        <p className="text-sm mb-6" style={{ color: '#9e9790' }}>{error}</p>
+                        <div className="flex gap-3">
+                            <button onClick={fetchDashboard}
+                                className="btn-tactile flex-1 py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                style={{ background: '#7c9a6e' }}>
+                                <RotateCcw size={14} /> Try Again
+                            </button>
+                            <Link href="/interview"
+                                className="btn-tactile flex-1 py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2"
+                                style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#5c5650' }}>
+                                <ArrowRight size={14} /> Start Interview
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

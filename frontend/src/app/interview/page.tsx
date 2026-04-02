@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useInterviewStore } from '@/store/interviewStore';
@@ -8,11 +8,13 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import api from '@/lib/api';
+import Link from 'next/link';
 import {
     Brain, Mic, MicOff, Send, Code2, Play,
     ChevronRight, RotateCcw, CheckCircle2, XCircle,
-    Volume2, MessageSquare, Timer, Trophy,
-    Zap, BarChart2, ArrowRight, Loader2, Sparkles, Shield
+    MessageSquare, Timer, Trophy, ArrowLeft,
+    Zap, BarChart2, ArrowRight, Loader2, Sparkles, Shield,
+    AlertTriangle, Keyboard, FileText
 } from 'lucide-react';
 import ProctorMonitor from '@/components/interview/ProctorMonitor';
 
@@ -42,7 +44,7 @@ export default function InterviewPage() {
     const { isAuthenticated } = useAuthStore();
     const {
         sessionId, status, mode, difficulty, type, currentQuestion,
-        code, language, messages, isAIThinking, currentFeedback, sessionScore,
+        code, language, codeModified, messages, isAIThinking, currentFeedback, sessionScore,
         isListening, transcript,
         startSession, fetchNextQuestion, submitAnswer, sendMessage, endSession,
         setCode, setLanguage, setListening, setTranscript, reset
@@ -58,6 +60,10 @@ export default function InterviewPage() {
     const [proctored, setProctored] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [activeTab, setActiveTab] = useState<'problem' | 'feedback'>('problem');
+    const [showEndConfirm, setShowEndConfirm] = useState(false);
+    const [isStarting, setIsStarting] = useState(false);
+    const [mobilePanel, setMobilePanel] = useState<'problem' | 'editor' | 'chat'>('problem');
+    const [behavioralAnswer, setBehavioralAnswer] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const timerRef = useRef<NodeJS.Timeout>(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,22 +81,50 @@ export default function InterviewPage() {
     const formatTime = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
     const handleStart = async () => {
+        setIsStarting(true);
         try { reset(); setElapsedTime(0); await startSession(selectedMode, selectedType, selectedDifficulty); await fetchNextQuestion(selectedTopic || undefined); toast.success(`${selectedMode} Interview started! Good luck! 🎯`); }
         catch { toast.error('Failed to start interview. Check API key and backend.'); }
+        finally { setIsStarting(false); }
     };
-    const handleRunCode = async () => {
+    const handleRunCode = useCallback(async () => {
         if (!code.trim()) { toast.error('Write some code first!'); return; }
         setIsRunning(true);
         try { const { data } = await api.post('/interview/execute', { code, language }); setExecutionResult(data.data); if (data.data.simulated) toast('Running in simulation mode (Docker not available)', { icon: 'ℹ️' }); }
         catch { toast.error('Execution failed'); } finally { setIsRunning(false); }
-    };
-    const handleSubmit = async () => {
-        try { await submitAnswer(); setActiveTab('feedback'); toast.success('Answer submitted! Check feedback →'); }
-        catch { toast.error('Submission failed'); }
-    };
-    const handleNextQuestion = async () => { setExecutionResult(null); setActiveTab('problem'); await fetchNextQuestion(selectedTopic || undefined); };
-    const handleEndSession = async () => { await endSession(); toast.success(`Interview Complete! Final Score: ${sessionScore}/100 🏆`); };
+    }, [code, language]);
+    const handleSubmit = useCallback(async () => {
+        if (type === 'Behavioral' && behavioralAnswer.trim()) {
+            try { await submitAnswer(behavioralAnswer); setActiveTab('feedback'); setBehavioralAnswer(''); toast.success('Answer submitted! Check feedback →'); }
+            catch { toast.error('Submission failed'); }
+        } else {
+            try { await submitAnswer(); setActiveTab('feedback'); toast.success('Answer submitted! Check feedback →'); }
+            catch { toast.error('Submission failed'); }
+        }
+    }, [type, behavioralAnswer, submitAnswer]);
+    const handleNextQuestion = async () => { setExecutionResult(null); setActiveTab('problem'); setBehavioralAnswer(''); await fetchNextQuestion(selectedTopic || undefined); };
+    const handleEndSession = async () => { setShowEndConfirm(false); await endSession(); toast.success(`Interview Complete! Final Score: ${sessionScore}/100 🏆`); };
     const handleChat = async () => { if (!chatInput.trim() || isAIThinking) return; const msg = chatInput; setChatInput(''); await sendMessage(msg); };
+    const formatRelativeTime = (date: Date) => {
+        const now = new Date();
+        const diff = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
+        if (diff < 60) return 'just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        if (status !== 'active') return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (e.shiftKey) { handleSubmit(); }
+                else { handleRunCode(); }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [status, handleRunCode, handleSubmit]);
 
     const toggleVoice = () => {
         if (typeof window === 'undefined') return;
@@ -115,6 +149,10 @@ export default function InterviewPage() {
                 <div className="blob w-[350px] h-[350px] top-20 right-20" style={{ background: '#c4d8b8', opacity: 0.1 }} />
                 <div className="max-w-4xl mx-auto relative z-10">
                     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={gentleSpring} className="mb-12">
+                        <Link href="/dashboard" className="btn-tactile inline-flex items-center gap-2 text-sm mb-6 px-3 py-1.5 rounded-lg transition-all"
+                            style={{ color: '#9e9790', background: 'transparent', border: '1px solid #e0dbd2' }}>
+                            <ArrowLeft size={14} /> Back to Dashboard
+                        </Link>
                         <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: '#d4a574' }}>set up your session 📝</span>
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2"
                             style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
@@ -243,12 +281,24 @@ export default function InterviewPage() {
                             </button>
                         </div>
 
+                        {/* Keyboard shortcuts hint */}
+                        <div className="flex items-center gap-2 p-3 rounded-lg" style={{ background: 'rgba(124,154,110,0.04)', border: '1px solid rgba(124,154,110,0.1)' }}>
+                            <Keyboard size={14} style={{ color: '#7c9a6e' }} />
+                            <span className="text-xs" style={{ color: '#9e9790' }}>
+                                <strong style={{ color: '#5c5650' }}>Shortcuts:</strong> Ctrl+Enter = Run Code · Ctrl+Shift+Enter = Submit
+                            </span>
+                        </div>
+
                         {/* Start */}
                         <motion.button whileHover={{ scale: 1.01, y: -2 }} whileTap={{ scale: 0.98 }} transition={gentleSpring}
-                            onClick={handleStart}
-                            className="btn-tactile w-full flex items-center justify-center gap-3 py-5 rounded-xl font-bold text-xl text-white transition-all"
+                            onClick={handleStart} disabled={isStarting}
+                            className="btn-tactile w-full flex items-center justify-center gap-3 py-5 rounded-xl font-bold text-xl text-white transition-all disabled:opacity-70"
                             style={{ background: '#7c9a6e', boxShadow: '0 4px 24px rgba(124,154,110,0.2)' }}>
-                            <Sparkles size={20} /> Start {proctored ? '🔒 Proctored ' : ''}AI Interview <ArrowRight size={18} />
+                            {isStarting ? (
+                                <><Loader2 size={20} className="animate-spin" /> Starting Interview...</>
+                            ) : (
+                                <><Sparkles size={20} /> Start {proctored ? '🔒 Proctored ' : ''}AI Interview <ArrowRight size={18} /></>
+                            )}
                         </motion.button>
                     </motion.div>
                 </div>
@@ -258,26 +308,41 @@ export default function InterviewPage() {
 
     // ── COMPLETED ──
     if (status === 'completed') {
+        const circumference = 2 * Math.PI * 40;
         return (
             <main className="min-h-screen pt-24 px-4 pb-12 flex items-center justify-center" style={{ background: '#faf8f4' }}>
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={gentleSpring}
                     className="max-w-lg w-full text-center">
                     <div className="paper-card rounded-2xl p-10">
-                        <div className="text-6xl mb-6">🏆</div>
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ ...gentleSpring, delay: 0.2 }}
+                            className="text-6xl mb-6">🏆</motion.div>
                         <h2 className="text-4xl font-bold tracking-tight mb-2"
                             style={{ fontFamily: 'var(--font-heading)', color: '#5a7e4c' }}>Interview Complete!</h2>
                         <p className="mb-8" style={{ color: '#9e9790' }}>Great job pushing through. Here&apos;s your performance summary.</p>
-                        <div className="relative w-36 h-36 mx-auto mb-8">
+                        <div className="relative w-36 h-36 mx-auto mb-4">
                             <svg className="w-full h-full score-ring" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="40" fill="none" stroke="#f0ece4" strokeWidth="8" />
-                                <circle cx="50" cy="50" r="40" fill="none" stroke="#7c9a6e" strokeWidth="8" strokeLinecap="round"
-                                    strokeDasharray={`${2 * Math.PI * 40}`} strokeDashoffset={`${2 * Math.PI * 40 * (1 - sessionScore / 100)}`} />
+                                <motion.circle cx="50" cy="50" r="40" fill="none"
+                                    stroke={sessionScore >= 70 ? '#7c9a6e' : sessionScore >= 50 ? '#d4a574' : '#c0544f'}
+                                    strokeWidth="8" strokeLinecap="round"
+                                    strokeDasharray={circumference}
+                                    initial={{ strokeDashoffset: circumference }}
+                                    animate={{ strokeDashoffset: circumference * (1 - sessionScore / 100) }}
+                                    transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.5 }} />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: '#5a7e4c' }}>{sessionScore}</span>
+                                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+                                    className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)', color: sessionScore >= 70 ? '#5a7e4c' : sessionScore >= 50 ? '#d4a574' : '#c0544f' }}>
+                                    {sessionScore}
+                                </motion.span>
                                 <span className="text-xs" style={{ color: '#b8b2aa' }}>/100</span>
                             </div>
                         </div>
+                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
+                            className="text-sm mb-8" style={{ color: '#9e9790' }}>
+                            {sessionScore >= 80 ? '🌟 Outstanding performance!' : sessionScore >= 60 ? '💪 Good work, keep it up!' : sessionScore >= 40 ? '📈 Room for improvement — practice more!' : '🎯 Keep practicing, you\'ll get there!'}
+                        </motion.p>
+                        <p className="text-xs mb-6" style={{ color: '#b8b2aa' }}>Time spent: {formatTime(elapsedTime)}</p>
                         <div className="flex gap-4">
                             <button onClick={() => reset()} className="btn-tactile flex-1 py-3 rounded-xl flex items-center justify-center gap-2"
                                 style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#5c5650' }}>
@@ -324,7 +389,7 @@ export default function InterviewPage() {
                         <Trophy size={13} style={{ color: '#d4a574' }} />
                         <span className="font-bold" style={{ color: '#5a7e4c' }}>{sessionScore}/100</span>
                     </div>
-                    <button onClick={handleEndSession}
+                    <button onClick={() => setShowEndConfirm(true)}
                         className="btn-tactile px-4 py-2 rounded-lg text-xs font-semibold"
                         style={{ background: 'rgba(192,84,79,0.06)', color: '#c0544f', border: '1px solid rgba(192,84,79,0.12)' }}>
                         End Interview
@@ -332,9 +397,24 @@ export default function InterviewPage() {
                 </div>
             </div>
 
+            {/* Mobile panel switcher */}
+            <div className="flex md:hidden flex-shrink-0" style={{ borderBottom: '1px solid #e0dbd2' }}>
+                {(['problem', ...(type !== 'Behavioral' ? ['editor' as const] : []), 'chat'] as const).map(panel => (
+                    <button key={panel} onClick={() => setMobilePanel(panel)}
+                        className="flex-1 py-2.5 text-xs font-semibold capitalize transition-all"
+                        style={{
+                            color: mobilePanel === panel ? '#5a7e4c' : '#b8b2aa',
+                            borderBottom: mobilePanel === panel ? '2px solid #7c9a6e' : '2px solid transparent',
+                            background: mobilePanel === panel ? 'rgba(124,154,110,0.04)' : 'transparent',
+                        }}>
+                        {panel === 'problem' ? '📋 Problem' : panel === 'editor' ? '💻 Code' : '💬 Chat'}
+                    </button>
+                ))}
+            </div>
+
             <div className="flex-1 flex overflow-hidden">
                 {/* Left: Problem + Feedback */}
-                <div className={`${type === 'Behavioral' ? 'w-[55%]' : 'w-[42%]'} flex flex-col overflow-hidden`} style={{ borderRight: '1px solid #e0dbd2' }}>
+                <div className={`${type === 'Behavioral' ? 'md:w-[55%]' : 'md:w-[42%]'} ${mobilePanel === 'problem' ? 'flex' : 'hidden'} md:flex flex-col overflow-hidden w-full`} style={{ borderRight: '1px solid #e0dbd2' }}>
                     <div className="flex flex-shrink-0" style={{ borderBottom: '1px solid #e0dbd2' }}>
                         {['problem', 'feedback'].map(tab => (
                             <button key={tab} onClick={() => setActiveTab(tab as 'problem' | 'feedback')}
@@ -467,11 +547,14 @@ export default function InterviewPage() {
 
                 {/* Center: Editor — hidden for Behavioral */}
                 {type !== 'Behavioral' && (
-                    <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className={`flex-1 ${mobilePanel === 'editor' ? 'flex' : 'hidden'} md:flex flex-col overflow-hidden`}>
                         <div className="flex items-center justify-between px-4 py-2 flex-shrink-0" style={{ borderBottom: '1px solid #e0dbd2' }}>
                             <div className="flex items-center gap-2">
                                 <Code2 size={13} style={{ color: '#7c9a6e' }} />
-                                <select value={language} onChange={e => setLanguage(e.target.value)}
+                                <select value={language} onChange={e => {
+                                    if (codeModified && !window.confirm('Switching language will reset your code. Continue?')) return;
+                                    setLanguage(e.target.value);
+                                }}
                                     className="rounded-lg px-2 py-1 text-xs focus:outline-none"
                                     style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#5c5650' }}>
                                     {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
@@ -519,7 +602,7 @@ export default function InterviewPage() {
                 )}
 
                 {/* Right: Chat */}
-                <div className={`${type === 'Behavioral' ? 'flex-1' : 'w-[28%]'} flex flex-col overflow-hidden`} style={{ borderLeft: '1px solid #e0dbd2' }}>
+                <div className={`${type === 'Behavioral' ? 'md:flex-1' : 'md:w-[28%]'} ${mobilePanel === 'chat' ? 'flex' : 'hidden'} md:flex flex-col overflow-hidden w-full`} style={{ borderLeft: '1px solid #e0dbd2' }}>
                     <div className="flex items-center justify-between px-4 py-3 flex-shrink-0" style={{ borderBottom: '1px solid #e0dbd2' }}>
                         <div className="flex items-center gap-2">
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white" style={{ background: '#7c9a6e' }}>
@@ -535,10 +618,10 @@ export default function InterviewPage() {
                         </div>
                         <div className="flex items-center gap-1">
                             <button onClick={toggleVoice} className="btn-tactile p-2 rounded-lg"
+                                title={isListening ? 'Stop listening' : 'Start voice input'}
                                 style={{ background: isListening ? 'rgba(192,84,79,0.06)' : 'transparent', color: isListening ? '#c0544f' : '#b8b2aa' }}>
                                 {isListening ? <Mic size={13} /> : <MicOff size={13} />}
                             </button>
-                            <button className="p-2 rounded-lg" style={{ color: '#b8b2aa' }}><Volume2 size={13} /></button>
                         </div>
                     </div>
 
@@ -565,6 +648,7 @@ export default function InterviewPage() {
                                     </div>
                                 )}
                                 <div className="text-xs leading-relaxed" style={{ color: '#5c5650' }}><ReactMarkdown>{msg.content}</ReactMarkdown></div>
+                                <div className="text-[9px] mt-1 text-right" style={{ color: '#b8b2aa' }}>{formatRelativeTime(msg.timestamp)}</div>
                             </motion.div>
                         ))}
                         {isAIThinking && (
@@ -576,6 +660,33 @@ export default function InterviewPage() {
                         )}
                         <div ref={messagesEndRef} />
                     </div>
+
+                    {/* Behavioral answer textarea */}
+                    {type === 'Behavioral' && (
+                        <div className="p-3 flex-shrink-0" style={{ borderTop: '1px solid #e0dbd2' }}>
+                            <div className="flex items-center gap-2 mb-2">
+                                <FileText size={12} style={{ color: '#7c9a6e' }} />
+                                <span className="text-xs font-semibold" style={{ color: '#5c5650' }}>Your Answer (STAR Method)</span>
+                                <span className="text-[10px] ml-auto" style={{ color: '#b8b2aa' }}>{behavioralAnswer.split(/\s+/).filter(Boolean).length} words</span>
+                            </div>
+                            <textarea
+                                value={behavioralAnswer}
+                                onChange={e => setBehavioralAnswer(e.target.value)}
+                                placeholder="Describe the Situation, Task, Action, and Result..."
+                                className="w-full rounded-lg px-3 py-2.5 text-xs focus:outline-none transition-all resize-none"
+                                rows={6}
+                                style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#2d2926' }}
+                                onFocus={e => { e.target.style.borderColor = 'rgba(124,154,110,0.3)'; }}
+                                onBlur={e => { e.target.style.borderColor = '#e0dbd2'; }}
+                            />
+                            <motion.button whileTap={{ scale: 0.98 }} onClick={handleSubmit}
+                                disabled={isAIThinking || !behavioralAnswer.trim()}
+                                className="btn-tactile w-full mt-2 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold text-white disabled:opacity-40"
+                                style={{ background: '#7c9a6e' }}>
+                                {isAIThinking ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />} Submit Answer
+                            </motion.button>
+                        </div>
+                    )}
 
                     <div className="p-3 flex-shrink-0" style={{ borderTop: '1px solid #e0dbd2' }}>
                         <div className="flex gap-2">
@@ -595,6 +706,46 @@ export default function InterviewPage() {
                     </div>
                 </div>
             </div>
+
+            {/* End Interview Confirmation Modal */}
+            <AnimatePresence>
+                {showEndConfirm && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center px-4"
+                        style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+                        onClick={() => setShowEndConfirm(false)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                            transition={gentleSpring}
+                            onClick={e => e.stopPropagation()}
+                            className="paper-card rounded-2xl p-8 max-w-md w-full text-center">
+                            <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center"
+                                style={{ background: 'rgba(192,84,79,0.08)', border: '1px solid rgba(192,84,79,0.15)' }}>
+                                <AlertTriangle size={24} style={{ color: '#c0544f' }} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>End Interview?</h3>
+                            <p className="text-sm mb-2" style={{ color: '#9e9790' }}>This action cannot be undone. Your current progress will be saved.</p>
+                            <div className="flex items-center justify-center gap-2 mb-6 px-4 py-2 rounded-lg"
+                                style={{ background: 'rgba(124,154,110,0.05)', border: '1px solid rgba(124,154,110,0.1)' }}>
+                                <Trophy size={14} style={{ color: '#d4a574' }} />
+                                <span className="text-sm font-bold" style={{ color: '#5a7e4c' }}>Current Score: {sessionScore}/100</span>
+                                <span className="text-xs" style={{ color: '#b8b2aa' }}>· {formatTime(elapsedTime)}</span>
+                            </div>
+                            <div className="flex gap-3">
+                                <button onClick={() => setShowEndConfirm(false)}
+                                    className="btn-tactile flex-1 py-3 rounded-xl text-sm font-medium"
+                                    style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#5c5650' }}>
+                                    Continue Interview
+                                </button>
+                                <button onClick={handleEndSession}
+                                    className="btn-tactile flex-1 py-3 rounded-xl text-sm font-semibold text-white"
+                                    style={{ background: '#c0544f' }}>
+                                    End Interview
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

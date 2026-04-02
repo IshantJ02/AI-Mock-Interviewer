@@ -61,6 +61,7 @@ interface InterviewStore {
     // Code editor state
     code: string;
     language: string;
+    codeModified: boolean;
 
     // AI chat
     messages: Message[];
@@ -98,6 +99,7 @@ const initialState = {
     questionStartTime: null,
     code: '# Write your solution here\n\ndef solution():\n    pass\n',
     language: 'python',
+    codeModified: false,
     messages: [],
     isAIThinking: false,
     currentFeedback: null,
@@ -219,11 +221,11 @@ export const useInterviewStore = create<InterviewStore>((set, get) => ({
         set({ status: 'completed' });
     },
 
-    setCode: (code) => set({ code }),
+    setCode: (code) => set({ code, codeModified: true }),
     setLanguage: (language) => {
         const { currentQuestion } = get();
         const starterCode = currentQuestion?.starterCode?.[language] || DEFAULT_STARTERS[language] || DEFAULT_STARTERS.python;
-        set({ language, code: starterCode });
+        set({ language, code: starterCode, codeModified: false });
     },
     setListening: (isListening) => set({ isListening }),
     setTranscript: (transcript) => set({ transcript }),
