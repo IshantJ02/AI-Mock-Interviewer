@@ -8,29 +8,29 @@
 
 @layer base {
   :root {
-    /* — Warm cozy palette — */
+    /* — Warm cozy palette (Darkened for better contrast) — */
     --bg: #faf8f4;
     --bg-warm: #f5f1ea;
     --surface: #f0ece4;
     --surface-2: #e8e3da;
     --surface-3: #dfd9ce;
-    --paper: #fffdf8;
-    --paper-cream: #fefcf5;
-    --border: #e0dbd2;
-    --border-warm: #d4cec3;
-    --text-primary: #2d2926;
-    --text-secondary: #5c5650;
-    --text-muted: #9e9790;
-    --text-light: #b8b2aa;
-    --accent: #7c9a6e;
-    --accent-light: rgba(124, 154, 110, 0.12);
-    --accent-hover: #6a8a5c;
-    --warm: #d4a574;
-    --warm-light: rgba(212, 165, 116, 0.15);
-    --danger: #c0544f;
-    --danger-light: rgba(192, 84, 79, 0.1);
-    --success: #7c9a6e;
-    --warning: #d4a574;
+    --paper: #ffffff;
+    --paper-cream: #fbf9f2;
+    --border: #d4cec3;
+    --border-warm: #c4bbae;
+    --text-primary: #1a1816;
+    --text-secondary: #4a443e;
+    --text-muted: #7a726b;
+    --text-light: #918a82;
+    --accent: #5a7b4c;
+    --accent-light: rgba(90, 123, 76, 0.12);
+    --accent-hover: #456239;
+    --warm: #b88655;
+    --warm-light: rgba(184, 134, 85, 0.15);
+    --danger: #a53f3a;
+    --danger-light: rgba(165, 63, 58, 0.1);
+    --success: #5a7b4c;
+    --warning: #b88655;
 
     /* — Spacing scale (fluid, not rigid) — */
     --sp-1: 4px;
