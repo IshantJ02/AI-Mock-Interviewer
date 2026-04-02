@@ -192,7 +192,7 @@ export default function HomePage() {
                     border: '1px solid #e0dbd2',
                   }}>
                   <Play size={13} />
-                  Watch Demo
+                  Sign In
                 </Link>
               </motion.div>
             </div>
@@ -654,9 +654,9 @@ export default function HomePage() {
             © 2026 NextUp.ai. Built to help engineers get hired.
           </p>
           <div className="flex items-center gap-5 text-xs" style={{ color: '#b8b2aa' }}>
-            <Link href="#" className="hover:text-[#7c9a6e] transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-[#7c9a6e] transition-colors">Terms</Link>
-            <Link href="https://github.com" className="hover:text-[#7c9a6e] transition-colors flex items-center gap-1">
+            <span className="cursor-default">Privacy</span>
+            <span className="cursor-default">Terms</span>
+            <Link href="https://github.com/IshantJ02/AI-Mock-Interviewer" target="_blank" className="hover:text-[#7c9a6e] transition-colors flex items-center gap-1">
               <Globe size={12} /> GitHub
             </Link>
           </div>
