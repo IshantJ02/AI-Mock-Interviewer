@@ -8,14 +8,14 @@
 
 @layer base {
   :root {
-    /* — Warm cozy palette (Darkened for better contrast) — */
-    --bg: #faf8f4;
-    --bg-warm: #f5f1ea;
-    --surface: #f0ece4;
-    --surface-2: #e8e3da;
-    --surface-3: #dfd9ce;
-    --paper: #ffffff;
-    --paper-cream: #fbf9f2;
+    /* — Vintage Notebook Palette (No longer whitish) — */
+    --bg: #eaddcd;           /* Vintage paper background */
+    --bg-warm: #dfcec1;      /* Slightly darker background */
+    --surface: #d8c2b3;      /* Interactive surface */
+    --surface-2: #cca794;
+    --surface-3: #ba937e;
+    --paper: #f4ebd8;        /* Card background */
+    --paper-cream: #eee3cb;
     --border: #d4cec3;
     --border-warm: #c4bbae;
     --text-primary: #1a1816;
