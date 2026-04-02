@@ -175,9 +175,9 @@ export default function InterviewPage() {
                                         transition={gentleSpring} onClick={() => setSelectedMode(m)}
                                         className="btn-tactile py-3 rounded-xl text-sm font-semibold transition-all"
                                         style={{
-                                            background: selectedMode === m ? `${MODE_COLORS[m]}12` : '#f5f1ea',
-                                            color: selectedMode === m ? MODE_COLORS[m] : '#9e9790',
-                                            border: selectedMode === m ? `1px solid ${MODE_COLORS[m]}35` : '1px solid #e0dbd2',
+                                            background: selectedMode === m ? MODE_COLORS[m] : '#ffffff',
+                                            color: selectedMode === m ? '#ffffff' : '#9e9790',
+                                            border: selectedMode === m ? `1px solid ${MODE_COLORS[m]}` : '1px solid #e0dbd2',
                                         }}>
                                         {MODE_EMOJI[m]} {m}
                                     </motion.button>
@@ -196,9 +196,9 @@ export default function InterviewPage() {
                                         onClick={() => setSelectedType(t)}
                                         className="btn-tactile py-3 rounded-xl text-sm font-semibold transition-all"
                                         style={{
-                                            background: selectedType === t ? 'rgba(124,154,110,0.08)' : '#f5f1ea',
-                                            color: selectedType === t ? '#5a7e4c' : '#9e9790',
-                                            border: selectedType === t ? '1px solid rgba(124,154,110,0.2)' : '1px solid #e0dbd2',
+                                            background: selectedType === t ? '#7c9a6e' : '#ffffff',
+                                            color: selectedType === t ? '#ffffff' : '#9e9790',
+                                            border: selectedType === t ? '1px solid #7c9a6e' : '1px solid #e0dbd2',
                                         }}>{t}</motion.button>
                                 ))}
                             </div>
@@ -217,9 +217,9 @@ export default function InterviewPage() {
                                             onClick={() => setSelectedDifficulty(d)}
                                             className="btn-tactile py-3 rounded-xl text-sm font-semibold transition-all"
                                             style={{
-                                                background: selectedDifficulty === d ? `${dColor}10` : '#f5f1ea',
-                                                color: selectedDifficulty === d ? dColor : '#9e9790',
-                                                border: selectedDifficulty === d ? `1px solid ${dColor}30` : '1px solid #e0dbd2',
+                                                background: selectedDifficulty === d ? dColor : '#ffffff',
+                                                color: selectedDifficulty === d ? '#ffffff' : '#9e9790',
+                                                border: selectedDifficulty === d ? `1px solid ${dColor}` : '1px solid #e0dbd2',
                                             }}>
                                             {d === 'Easy' ? '🟢' : d === 'Medium' ? '🟡' : '🔴'} {d}
                                         </motion.button>
@@ -239,17 +239,17 @@ export default function InterviewPage() {
                                     <button onClick={() => setSelectedTopic('')}
                                         className="btn-tactile px-4 py-2 rounded-lg text-xs font-medium transition-all"
                                         style={{
-                                            background: !selectedTopic ? 'rgba(124,154,110,0.08)' : '#f5f1ea',
-                                            color: !selectedTopic ? '#5a7e4c' : '#b8b2aa',
-                                            border: !selectedTopic ? '1px solid rgba(124,154,110,0.15)' : '1px solid #e0dbd2',
+                                            background: !selectedTopic ? '#7c9a6e' : '#ffffff',
+                                            color: !selectedTopic ? '#ffffff' : '#b8b2aa',
+                                            border: !selectedTopic ? '1px solid #7c9a6e' : '1px solid #e0dbd2',
                                         }}>Auto (based on weaknesses)</button>
                                     {TOPICS_LIST.map(t => (
                                         <button key={t} onClick={() => setSelectedTopic(t)}
                                             className="btn-tactile px-4 py-2 rounded-lg text-xs font-medium transition-all"
                                             style={{
-                                                background: selectedTopic === t ? 'rgba(124,154,110,0.08)' : '#f5f1ea',
-                                                color: selectedTopic === t ? '#5a7e4c' : '#b8b2aa',
-                                                border: selectedTopic === t ? '1px solid rgba(124,154,110,0.15)' : '1px solid #e0dbd2',
+                                                background: selectedTopic === t ? '#7c9a6e' : '#ffffff',
+                                                color: selectedTopic === t ? '#ffffff' : '#b8b2aa',
+                                                border: selectedTopic === t ? '1px solid #7c9a6e' : '1px solid #e0dbd2',
                                             }}>{t}</button>
                                     ))}
                                 </div>
