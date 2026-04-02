@@ -84,7 +84,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="min-h-screen overflow-x-hidden relative" style={{ background: '#faf8f4' }}>
+    <main className="min-h-screen overflow-x-hidden relative" style={{ background: 'var(--bg)' }}>
 
       <Navbar />
 
@@ -129,13 +129,13 @@ export default function HomePage() {
                   fontFamily: 'var(--font-heading)',
                   fontSize: 'clamp(2.8rem, 6vw, 5.5rem)',
                   fontWeight: 700,
-                  color: '#2d2926',
+                  color: 'var(--text-primary)',
                 }}
               >
                 Ace Your
                 <br />
                 <span className="hand-underline" style={{ color: '#5a7e4c' }}>{typedText}</span>
-                <span className="animate-pulse" style={{ color: '#7c9a6e', fontWeight: 300 }}>|</span>
+                <span className="animate-pulse" style={{ color: 'var(--accent)', fontWeight: 300 }}>|</span>
               </motion.h1>
 
               {/* Handwritten note */}
@@ -148,7 +148,7 @@ export default function HomePage() {
                 <span style={{
                   fontFamily: 'var(--font-hand)',
                   fontSize: '1.3rem',
-                  color: '#d4a574',
+                  color: 'var(--warm)',
                   fontWeight: 600,
                 }}>
                   ← practice makes perfect!
@@ -164,7 +164,7 @@ export default function HomePage() {
               >
                 AI-powered mock interviews with live code execution,
                 voice mode, and real-time feedback.{' '}
-                <span className="highlight-marker" style={{ color: '#2d2926' }}>Train like the pros.</span>
+                <span className="highlight-marker" style={{ color: 'var(--text-primary)' }}>Train like the pros.</span>
               </motion.p>
 
               {/* CTAs */}
@@ -177,7 +177,7 @@ export default function HomePage() {
                 <Link href="/register"
                   className="btn-tactile group flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg text-white"
                   style={{
-                    background: '#7c9a6e',
+                    background: 'var(--accent)',
                     boxShadow: '0 4px 20px rgba(124,154,110,0.2)',
                   }}>
                   <PenTool size={17} />
@@ -187,9 +187,9 @@ export default function HomePage() {
                 <Link href="/login"
                   className="btn-tactile flex items-center gap-3 px-7 py-4 rounded-2xl font-medium text-base transition-all"
                   style={{
-                    background: '#f0ece4',
-                    color: '#5c5650',
-                    border: '1px solid #e0dbd2',
+                    background: 'var(--surface)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border)',
                   }}>
                   <Play size={13} />
                   Sign In
@@ -217,10 +217,10 @@ export default function HomePage() {
                       transform: `rotate(${i % 2 === 0 ? -0.8 : 0.5}deg)`,
                     }}
                   >
-                    <Icon size={17} className="mx-auto mb-3" style={{ color: '#7c9a6e' }} />
+                    <Icon size={17} className="mx-auto mb-3" style={{ color: 'var(--accent)' }} />
                     <div className="text-2xl font-bold tracking-tight mb-1"
-                      style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>{value}</div>
-                    <div className="text-xs" style={{ color: '#9e9790' }}>{label}</div>
+                      style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>{value}</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -236,9 +236,9 @@ export default function HomePage() {
           >
             {STATS.map(({ value, label, icon: Icon }) => (
               <div key={label} className="paper-card p-4 rounded-xl text-center">
-                <Icon size={15} className="mx-auto mb-2" style={{ color: '#7c9a6e' }} />
+                <Icon size={15} className="mx-auto mb-2" style={{ color: 'var(--accent)' }} />
                 <div className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>{value}</div>
-                <div className="text-xs" style={{ color: '#9e9790' }}>{label}</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{label}</div>
               </div>
             ))}
           </motion.div>
@@ -250,10 +250,10 @@ export default function HomePage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2.5 }}
           className="absolute bottom-10 left-8 flex flex-col items-center gap-2 text-xs"
-          style={{ color: '#b8b2aa' }}
+          style={{ color: 'var(--text-light)' }}
         >
           <span style={{ fontFamily: 'var(--font-hand)', fontSize: '0.9rem' }}>scroll down</span>
-          <div className="w-px h-10" style={{ background: 'linear-gradient(to bottom, #d4cec3, transparent)' }} />
+          <div className="w-px h-10" style={{ background: 'linear-gradient(to bottom, var(--border), transparent)' }} />
         </motion.div>
       </section>
 
@@ -271,11 +271,11 @@ export default function HomePage() {
               transition={softSpring}
               className="lg:col-span-7"
             >
-              <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: '#d4a574' }}>
+              <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: 'var(--warm)' }}>
                 pick your battlefield 🎯
               </span>
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1] mt-2"
-                style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+                style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                 Train for{' '}
                 <span className="hand-underline" style={{ color: '#5a7e4c' }}>Any Company</span>
               </h2>
@@ -287,7 +287,7 @@ export default function HomePage() {
               transition={{ ...softSpring, delay: 0.1 }}
               className="lg:col-span-5"
             >
-              <p className="text-base leading-relaxed" style={{ color: '#9e9790' }}>
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 Our AI adapts its personality, difficulty, and focus based on your target company.
               </p>
             </motion.div>
@@ -310,14 +310,14 @@ export default function HomePage() {
                 }}
               >
                 <div className="text-2xl mb-3">{company.icon}</div>
-                <h3 className="text-lg font-bold mb-2" style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+                <h3 className="text-lg font-bold mb-2" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                   {company.name}
                 </h3>
-                <p className="text-sm mb-4" style={{ color: '#9e9790' }}>{company.desc}</p>
+                <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>{company.desc}</p>
                 <div className="space-y-1.5">
                   {company.traits.map(trait => (
                     <div key={trait} className="flex items-center gap-2 text-xs" style={{ color: '#6b6560' }}>
-                      <CheckCircle2 size={11} style={{ color: '#7c9a6e' }} />
+                      <CheckCircle2 size={11} style={{ color: 'var(--accent)' }} />
                       {trait}
                     </div>
                   ))}
@@ -339,21 +339,21 @@ export default function HomePage() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-xl">{COMPANY_MODES[activeCompany].icon}</span>
                 <div>
-                  <h4 className="text-sm font-bold" style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+                  <h4 className="text-sm font-bold" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                     {COMPANY_MODES[activeCompany].name} Mode Active
                   </h4>
-                  <p className="text-xs" style={{ color: '#9e9790' }}>AI personality loaded</p>
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>AI personality loaded</p>
                 </div>
                 <div className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-full"
                   style={{ background: 'rgba(124,154,110,0.08)', border: '1px solid rgba(124,154,110,0.15)' }}>
-                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#7c9a6e' }} />
-                  <span className="text-xs" style={{ color: '#7c9a6e' }}>Active</span>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
+                  <span className="text-xs" style={{ color: 'var(--accent)' }}>Active</span>
                 </div>
               </div>
               <div className="rounded-xl p-4 font-mono text-sm"
-                style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#6b6560' }}>
-                <span style={{ color: '#7c9a6e', fontWeight: 600 }}>AI Interviewer:</span>{' '}
-                <span style={{ color: '#5c5650' }}>
+                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: '#6b6560' }}>
+                <span style={{ color: 'var(--accent)', fontWeight: 600 }}>AI Interviewer:</span>{' '}
+                <span style={{ color: 'var(--text-secondary)' }}>
                   {activeCompany === 0 && "Let's dive into your solution. What's the time complexity, and can you prove it's optimal?"}
                   {activeCompany === 1 && "How does this solution scale to 100M users? Think about our Leadership Principle: Think Big."}
                   {activeCompany === 2 && "How would this feature impact 3 billion users? What are the product trade-offs?"}
@@ -377,11 +377,11 @@ export default function HomePage() {
             transition={softSpring}
             className="mb-14"
           >
-            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: '#d4a574' }}>
+            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: 'var(--warm)' }}>
               everything in one place 📚
             </span>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-2"
-              style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+              style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
               Everything You Need to{' '}
               <span className="highlight-marker">Get Hired</span>
             </h2>
@@ -404,11 +404,11 @@ export default function HomePage() {
               >
                 <div className="w-11 h-11 rounded-xl mb-5 flex items-center justify-center group-hover:scale-105 transition-transform"
                   style={{ background: 'rgba(124, 154, 110, 0.1)', border: '1px solid rgba(124, 154, 110, 0.12)' }}>
-                  <Icon size={20} style={{ color: '#7c9a6e' }} />
+                  <Icon size={20} style={{ color: 'var(--accent)' }} />
                 </div>
                 <h3 className="text-lg font-bold mb-3"
-                  style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>{title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#9e9790' }}>{desc}</p>
+                  style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>{title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -428,11 +428,11 @@ export default function HomePage() {
             transition={softSpring}
             className="mb-10"
           >
-            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: '#d4a574' }}>
+            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: 'var(--warm)' }}>
               from easy to hard 📝
             </span>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-2"
-              style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+              style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
               <span className="highlight-marker">15 DSA Topics</span> Covered
             </h2>
           </motion.div>
@@ -447,7 +447,7 @@ export default function HomePage() {
                 whileHover={{ scale: 1.06, y: -2, rotate: -1 }}
                 className="px-5 py-2.5 rounded-xl text-sm font-medium cursor-default paper-card"
                 style={{
-                  color: '#5c5650',
+                  color: 'var(--text-secondary)',
                   marginTop: i % 3 === 1 ? '6px' : '0',
                 }}
               >
@@ -477,11 +477,11 @@ export default function HomePage() {
                 Docker Sandbox · 2s Timeout
               </div>
               <h2 className="text-3xl font-bold mb-5 tracking-tight"
-                style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+                style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                 Run Code in{' '}
-                <span style={{ fontFamily: 'var(--font-hand)', fontSize: '2.2rem', color: '#d4a574' }}>Seconds</span>
+                <span style={{ fontFamily: 'var(--font-hand)', fontSize: '2.2rem', color: 'var(--warm)' }}>Seconds</span>
               </h2>
-              <p className="mb-8 leading-relaxed" style={{ color: '#9e9790' }}>
+              <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                 Write Python, C++, or Java directly in the browser. Each execution runs in an isolated Docker container — completely secure.
               </p>
               <div className="space-y-3">
@@ -491,10 +491,10 @@ export default function HomePage() {
                   { icon: Lock, text: 'No network or filesystem access' },
                   { icon: Cpu, text: '64MB memory limit per run' },
                 ].map(({ icon: Icon, text }) => (
-                  <div key={text} className="flex items-center gap-3 text-sm" style={{ color: '#5c5650' }}>
+                  <div key={text} className="flex items-center gap-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center"
                       style={{ background: 'rgba(124,154,110,0.08)', border: '1px solid rgba(124,154,110,0.1)' }}>
-                      <Icon size={14} style={{ color: '#7c9a6e' }} />
+                      <Icon size={14} style={{ color: 'var(--accent)' }} />
                     </div>
                     {text}
                   </div>
@@ -510,29 +510,29 @@ export default function HomePage() {
               className="lg:col-span-7 paper-card rounded-2xl overflow-hidden"
               style={{ transform: 'rotate(-0.5deg)' }}
             >
-              <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: '1px solid #e0dbd2' }}>
-                <div className="w-3 h-3 rounded-full" style={{ background: '#c0544f' }} />
-                <div className="w-3 h-3 rounded-full" style={{ background: '#d4a574' }} />
-                <div className="w-3 h-3 rounded-full" style={{ background: '#7c9a6e' }} />
-                <span className="ml-3 text-xs font-mono" style={{ color: '#b8b2aa' }}>solution.py</span>
+              <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
+                <div className="w-3 h-3 rounded-full" style={{ background: 'var(--danger)' }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: 'var(--warm)' }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: 'var(--accent)' }} />
+                <span className="ml-3 text-xs font-mono" style={{ color: 'var(--text-light)' }}>solution.py</span>
               </div>
-              <div className="p-6 font-mono text-sm" style={{ background: '#fefcf5' }}>
-                <div className="text-xs mb-3" style={{ color: '#b8b2aa' }}># Two Sum · O(n) solution</div>
-                <div><span style={{ color: '#7c9a6e' }}>def</span> <span style={{ color: '#2d2926' }}>two_sum</span><span style={{ color: '#9e9790' }}>(nums, target):</span></div>
-                <div className="pl-4"><span style={{ color: '#7c9a6e' }}>seen</span> <span style={{ color: '#b8b2aa' }}>=</span> <span style={{ color: '#d4a574' }}>{'{ }'}</span></div>
-                <div className="pl-4"><span style={{ color: '#7c9a6e' }}>for</span> <span style={{ color: '#5c5650' }}>i, num</span> <span style={{ color: '#7c9a6e' }}>in</span> <span style={{ color: '#2d2926' }}>enumerate</span><span style={{ color: '#9e9790' }}>(nums):</span></div>
-                <div className="pl-8"><span style={{ color: '#5c5650' }}>comp</span> <span style={{ color: '#b8b2aa' }}>=</span> <span style={{ color: '#5c5650' }}>target - num</span></div>
-                <div className="pl-8"><span style={{ color: '#7c9a6e' }}>if</span> <span style={{ color: '#5c5650' }}>comp</span> <span style={{ color: '#7c9a6e' }}>in</span> <span style={{ color: '#5c5650' }}>seen:</span></div>
-                <div className="pl-12"><span style={{ color: '#7c9a6e' }}>return</span> <span style={{ color: '#5c5650' }}>[seen[comp], i]</span></div>
-                <div className="pl-8"><span style={{ color: '#5c5650' }}>seen[num]</span> <span style={{ color: '#b8b2aa' }}>=</span> <span style={{ color: '#5c5650' }}>i</span></div>
-                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #e0dbd2' }}>
-                  <div className="flex items-center gap-2 text-xs mb-2" style={{ color: '#7c9a6e' }}>
+              <div className="p-6 font-mono text-sm" style={{ background: 'var(--paper-cream)' }}>
+                <div className="text-xs mb-3" style={{ color: 'var(--text-light)' }}># Two Sum · O(n) solution</div>
+                <div><span style={{ color: 'var(--accent)' }}>def</span> <span style={{ color: 'var(--text-primary)' }}>two_sum</span><span style={{ color: 'var(--text-muted)' }}>(nums, target):</span></div>
+                <div className="pl-4"><span style={{ color: 'var(--accent)' }}>seen</span> <span style={{ color: 'var(--text-light)' }}>=</span> <span style={{ color: 'var(--warm)' }}>{'{ }'}</span></div>
+                <div className="pl-4"><span style={{ color: 'var(--accent)' }}>for</span> <span style={{ color: 'var(--text-secondary)' }}>i, num</span> <span style={{ color: 'var(--accent)' }}>in</span> <span style={{ color: 'var(--text-primary)' }}>enumerate</span><span style={{ color: 'var(--text-muted)' }}>(nums):</span></div>
+                <div className="pl-8"><span style={{ color: 'var(--text-secondary)' }}>comp</span> <span style={{ color: 'var(--text-light)' }}>=</span> <span style={{ color: 'var(--text-secondary)' }}>target - num</span></div>
+                <div className="pl-8"><span style={{ color: 'var(--accent)' }}>if</span> <span style={{ color: 'var(--text-secondary)' }}>comp</span> <span style={{ color: 'var(--accent)' }}>in</span> <span style={{ color: 'var(--text-secondary)' }}>seen:</span></div>
+                <div className="pl-12"><span style={{ color: 'var(--accent)' }}>return</span> <span style={{ color: 'var(--text-secondary)' }}>[seen[comp], i]</span></div>
+                <div className="pl-8"><span style={{ color: 'var(--text-secondary)' }}>seen[num]</span> <span style={{ color: 'var(--text-light)' }}>=</span> <span style={{ color: 'var(--text-secondary)' }}>i</span></div>
+                <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+                  <div className="flex items-center gap-2 text-xs mb-2" style={{ color: 'var(--accent)' }}>
                     <CheckCircle2 size={13} />
                     <span>Execution: 23ms · Memory: 14.2MB</span>
                   </div>
-                  <div className="text-xs" style={{ color: '#9e9790' }}>
-                    <span style={{ color: '#7c9a6e', fontWeight: 600 }}>AI:</span> Perfect O(n) solution! Time complexity is O(n) and space is O(n) for the hash map.{' '}
-                    <span className="highlight-marker" style={{ color: '#2d2926' }}>Score: 96/100</span>
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                    <span style={{ color: 'var(--accent)', fontWeight: 600 }}>AI:</span> Perfect O(n) solution! Time complexity is O(n) and space is O(n) for the hash map.{' '}
+                    <span className="highlight-marker" style={{ color: 'var(--text-primary)' }}>Score: 96/100</span>
                   </div>
                 </div>
               </div>
@@ -553,11 +553,11 @@ export default function HomePage() {
             transition={softSpring}
             className="mb-14"
           >
-            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: '#d4a574' }}>
+            <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: 'var(--warm)' }}>
               real stories, real offers 💛
             </span>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-2"
-              style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+              style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
               Loved by{' '}
               <span className="hand-underline" style={{ color: '#5a7e4c' }}>Engineers</span>
             </h2>
@@ -579,18 +579,18 @@ export default function HomePage() {
               >
                 <div className="flex items-center gap-1 mb-4">
                   {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} size={13} style={{ color: '#d4a574', fill: '#d4a574' }} />
+                    <Star key={j} size={13} style={{ color: 'var(--warm)', fill: 'var(--warm)' }} />
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: '#5c5650' }}>&ldquo;{t.text}&rdquo;</p>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>&ldquo;{t.text}&rdquo;</p>
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm text-white"
-                    style={{ background: '#7c9a6e' }}>
+                    style={{ background: 'var(--accent)' }}>
                     {t.avatar}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold" style={{ color: '#2d2926' }}>{t.name}</div>
-                    <div className="text-xs" style={{ color: '#9e9790' }}>{t.role}</div>
+                    <div className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{t.name}</div>
+                    <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{t.role}</div>
                   </div>
                 </div>
               </motion.div>
@@ -616,20 +616,20 @@ export default function HomePage() {
             <div className="blob w-[250px] h-[250px] bottom-0 right-0" style={{ background: '#e8d0b0', opacity: 0.1, animationDelay: '5s' }} />
             <div className="relative z-10">
               <div className="text-5xl mb-5">📖</div>
-              <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.3rem', color: '#d4a574' }}>
+              <span style={{ fontFamily: 'var(--font-hand)', fontSize: '1.3rem', color: 'var(--warm)' }}>
                 your study buddy is ready!
               </span>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 mt-3"
-                style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
+                style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
                 Ready to Land Your{' '}
                 <span className="hand-underline" style={{ color: '#5a7e4c' }}>Dream Job?</span>
               </h2>
-              <p className="mb-10 max-w-lg mx-auto" style={{ color: '#9e9790' }}>
+              <p className="mb-10 max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
                 Join thousands of engineers who used NextUp.ai to prepare for and land offers at top tech companies.
               </p>
               <Link href="/register"
                 className="btn-tactile inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-bold text-lg text-white"
-                style={{ background: '#7c9a6e', boxShadow: '0 4px 20px rgba(124,154,110,0.2)' }}>
+                style={{ background: 'var(--accent)', boxShadow: '0 4px 20px rgba(124,154,110,0.2)' }}>
                 <BookOpen size={18} />
                 Start Free — No Credit Card
                 <ChevronRight size={16} />
@@ -640,23 +640,23 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ──────────────────────────────────────────── */}
-      <footer className="py-10 px-6" style={{ borderTop: '1px solid #e0dbd2' }}>
+      <footer className="py-10 px-6" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: '#7c9a6e' }}>
+            <div className="w-5 h-5 rounded flex items-center justify-center" style={{ background: 'var(--accent)' }}>
               <Brain size={12} className="text-white" />
             </div>
-            <span className="font-bold text-sm" style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
-              NextUp<span style={{ color: '#7c9a6e' }}>.</span>ai
+            <span className="font-bold text-sm" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
+              NextUp<span style={{ color: 'var(--accent)' }}>.</span>ai
             </span>
           </div>
-          <p className="text-xs" style={{ color: '#b8b2aa' }}>
+          <p className="text-xs" style={{ color: 'var(--text-light)' }}>
             © 2026 NextUp.ai. Built to help engineers get hired.
           </p>
-          <div className="flex items-center gap-5 text-xs" style={{ color: '#b8b2aa' }}>
+          <div className="flex items-center gap-5 text-xs" style={{ color: 'var(--text-light)' }}>
             <span className="cursor-default">Privacy</span>
             <span className="cursor-default">Terms</span>
-            <Link href="https://github.com/IshantJ02/AI-Mock-Interviewer" target="_blank" className="hover:text-[#7c9a6e] transition-colors flex items-center gap-1">
+            <Link href="https://github.com/IshantJ02/AI-Mock-Interviewer" target="_blank" className="hover:text-[var(--accent)] transition-colors flex items-center gap-1">
               <Globe size={12} /> GitHub
             </Link>
           </div>

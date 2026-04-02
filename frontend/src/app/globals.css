@@ -8,29 +8,35 @@
 
 @layer base {
   :root {
-    /* — Vintage Notebook Palette (No longer whitish) — */
-    --bg: #eaddcd;           /* Vintage paper background */
-    --bg-warm: #dfcec1;      /* Slightly darker background */
-    --surface: #d8c2b3;      /* Interactive surface */
-    --surface-2: #cca794;
-    --surface-3: #ba937e;
-    --paper: #f4ebd8;        /* Card background */
-    --paper-cream: #eee3cb;
-    --border: #d4cec3;
-    --border-warm: #c4bbae;
-    --text-primary: #1a1816;
-    --text-secondary: #4a443e;
-    --text-muted: #7a726b;
-    --text-light: #918a82;
-    --accent: #5a7b4c;
-    --accent-light: rgba(90, 123, 76, 0.12);
-    --accent-hover: #456239;
-    --warm: #b88655;
-    --warm-light: rgba(184, 134, 85, 0.15);
-    --danger: #a53f3a;
-    --danger-light: rgba(165, 63, 58, 0.1);
-    --success: #5a7b4c;
-    --warning: #b88655;
+    /* — Dark Theme Palette — */
+    --bg: #0f1115;           /* Very dark gray background */
+    --bg-warm: #171a21;      /* Slightly lighter background */
+    --surface: #1e2128;      /* Interactive surface */
+    --surface-2: #272b33;
+    --surface-3: #323842;
+    --paper: #16181d;        /* Card background */
+    --paper-cream: #1c1f26;  /* Card hover / secondary */
+    
+    --border: #2d313a;       /* Dark borders */
+    --border-warm: #383e47; 
+    
+    --text-primary: #f0f2f5; /* Very light gray */
+    --text-secondary: #a3a9b5; /* Mid-gray */
+    --text-muted: #737b8a;   /* Muted gray text */
+    --text-light: #525a68;   /* Even more muted */
+    
+    --accent: #7c9a6e;       /* Keep the original green */
+    --accent-light: rgba(124, 154, 110, 0.2); 
+    --accent-hover: #98ba87; /* Lighter on hover for dark mode */
+    
+    --warm: #d4a574;         
+    --warm-light: rgba(212, 165, 116, 0.2);
+    
+    --danger: #d96c66;       /* Brightened for dark mode contrast */
+    --danger-light: rgba(217, 108, 102, 0.2);
+    
+    --success: #7c9a6e;
+    --warning: #d4a574;
 
     /* — Spacing scale (fluid, not rigid) — */
     --sp-1: 4px;

@@ -35,8 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${spaceGrotesk.variable} ${inter.variable} ${caveat.variable} font-sans antialiased`}
         suppressHydrationWarning
         style={{
-          background: '#faf8f4',
-          color: '#2d2926',
+          background: 'var(--bg)',
+          color: 'var(--text-primary)',
           fontFamily: 'var(--font-inter), system-ui, sans-serif',
         }}
       >
@@ -45,9 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           position="top-right"
           toastOptions={{
             style: {
-              background: '#fffdf8',
-              color: '#2d2926',
-              border: '1px solid #e0dbd2',
+              background: 'var(--paper)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border)',
               borderRadius: '10px',
               fontFamily: 'var(--font-inter)',
               fontSize: '14px',

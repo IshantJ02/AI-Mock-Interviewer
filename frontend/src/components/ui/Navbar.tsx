@@ -36,7 +36,7 @@ export default function Navbar() {
                 style={{
                     background: 'rgba(250, 248, 244, 0.85)',
                     backdropFilter: 'blur(12px)',
-                    border: '1px solid #e0dbd2',
+                    border: '1px solid var(--border)',
                     borderRadius: '14px',
                     boxShadow: '0 2px 12px rgba(0,0,0,0.03)',
                 }}
@@ -45,13 +45,13 @@ export default function Navbar() {
                 <Link href="/" className="flex items-center gap-2.5 group">
                     <div className="relative w-8 h-8">
                         <div className="relative w-8 h-8 rounded-lg flex items-center justify-center"
-                            style={{ background: '#7c9a6e' }}>
+                            style={{ background: 'var(--accent)' }}>
                             <Brain size={16} className="text-white" />
                         </div>
                     </div>
                     <span className="font-bold text-lg tracking-tight"
-                        style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
-                        NextUp<span style={{ color: '#7c9a6e' }}>.</span>ai
+                        style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
+                        NextUp<span style={{ color: 'var(--accent)' }}>.</span>ai
                     </span>
                 </Link>
 
@@ -64,7 +64,7 @@ export default function Navbar() {
                             className="btn-tactile flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all"
                             style={{
                                 background: pathname === href ? 'rgba(124, 154, 110, 0.1)' : 'transparent',
-                                color: pathname === href ? '#5a7e4c' : '#9e9790',
+                                color: pathname === href ? '#5a7e4c' : 'var(--text-muted)',
                                 border: pathname === href ? '1px solid rgba(124, 154, 110, 0.2)' : '1px solid transparent',
                             }}
                         >
@@ -79,20 +79,20 @@ export default function Navbar() {
                     {isAuthenticated ? (
                         <>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
-                                style={{ background: '#f0ece4', border: '1px solid #e0dbd2' }}>
+                                style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
                                 <div className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold text-white"
-                                    style={{ background: '#7c9a6e' }}>
+                                    style={{ background: 'var(--accent)' }}>
                                     {user?.name?.[0]?.toUpperCase() || 'U'}
                                 </div>
                                 <span className="text-sm max-w-[100px] truncate"
-                                    style={{ color: '#5c5650' }}>{user?.name}</span>
+                                    style={{ color: 'var(--text-secondary)' }}>{user?.name}</span>
                             </div>
                             <button
                                 onClick={handleLogout}
                                 className="btn-tactile flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all"
-                                style={{ color: '#9e9790' }}
-                                onMouseEnter={e => { e.currentTarget.style.color = '#c0544f'; e.currentTarget.style.background = 'rgba(192,84,79,0.06)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = '#9e9790'; e.currentTarget.style.background = 'transparent'; }}
+                                style={{ color: 'var(--text-muted)' }}
+                                onMouseEnter={e => { e.currentTarget.style.color = 'var(--danger)'; e.currentTarget.style.background = 'rgba(192,84,79,0.06)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
                             >
                                 <LogOut size={15} />
                             </button>
@@ -101,13 +101,13 @@ export default function Navbar() {
                         <>
                             <Link href="/login"
                                 className="btn-tactile px-4 py-2 text-sm transition-all"
-                                style={{ color: '#5c5650' }}>
+                                style={{ color: 'var(--text-secondary)' }}>
                                 Login
                             </Link>
                             <Link href="/register"
                                 className="btn-tactile flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-white"
                                 style={{
-                                    background: '#7c9a6e',
+                                    background: 'var(--accent)',
                                     boxShadow: '0 2px 10px rgba(124,154,110,0.15)',
                                 }}>
                                 <Sparkles size={13} />
@@ -120,7 +120,7 @@ export default function Navbar() {
 
                 {/* Mobile Toggle */}
                 <button onClick={() => setMenuOpen(!menuOpen)}
-                    className="md:hidden p-2 rounded-xl" style={{ color: '#5c5650' }}>
+                    className="md:hidden p-2 rounded-xl" style={{ color: 'var(--text-secondary)' }}>
                     {menuOpen ? <X size={20} /> : <Menu size={20} />}
                 </button>
             </div>
@@ -135,14 +135,14 @@ export default function Navbar() {
                     style={{
                         background: 'rgba(255, 253, 248, 0.95)',
                         backdropFilter: 'blur(16px)',
-                        border: '1px solid #e0dbd2',
+                        border: '1px solid var(--border)',
                         borderRadius: '14px',
                     }}
                 >
                     {isAuthenticated && navItems.map(({ href, label, icon: Icon }) => (
                         <Link key={href} href={href} onClick={() => setMenuOpen(false)}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
-                            style={{ color: '#5c5650' }}>
+                            style={{ color: 'var(--text-secondary)' }}>
                             <Icon size={18} />
                             {label}
                         </Link>
@@ -150,16 +150,16 @@ export default function Navbar() {
                     {isAuthenticated ? (
                         <button onClick={handleLogout}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all w-full"
-                            style={{ color: '#c0544f' }}>
+                            style={{ color: 'var(--danger)' }}>
                             <LogOut size={18} /> Logout
                         </button>
                     ) : (
-                        <div className="space-y-2 pt-2" style={{ borderTop: '1px solid #e0dbd2' }}>
+                        <div className="space-y-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
                             <Link href="/login" onClick={() => setMenuOpen(false)}
-                                className="block px-4 py-3 text-center rounded-xl" style={{ color: '#5c5650' }}>Login</Link>
+                                className="block px-4 py-3 text-center rounded-xl" style={{ color: 'var(--text-secondary)' }}>Login</Link>
                             <Link href="/register" onClick={() => setMenuOpen(false)}
                                 className="block px-4 py-3 text-center rounded-xl font-semibold text-white"
-                                style={{ background: '#7c9a6e' }}>Get Started</Link>
+                                style={{ background: 'var(--accent)' }}>Get Started</Link>
                         </div>
                     )}
                 </motion.div>

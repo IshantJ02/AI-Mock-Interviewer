@@ -27,7 +27,7 @@ export default function LoginPage() {
 
     return (
         <main className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-            style={{ background: '#faf8f4' }}>
+            style={{ background: 'var(--bg)' }}>
             <div className="absolute inset-0 dot-bg opacity-30" />
             <div className="blob w-[400px] h-[400px] bottom-0 right-0" style={{ background: '#c4d8b8', opacity: 0.12 }} />
             <div className="blob w-[350px] h-[350px] top-0 left-0" style={{ background: '#e8d0b0', opacity: 0.1, animationDelay: '3s' }} />
@@ -40,50 +40,50 @@ export default function LoginPage() {
             >
                 <Link href="/" className="flex items-center justify-center gap-2 mb-10">
                     <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white"
-                        style={{ background: '#7c9a6e' }}>
+                        style={{ background: 'var(--accent)' }}>
                         <Brain size={18} />
                     </div>
                     <span className="text-xl font-bold tracking-tight"
-                        style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>
-                        NextUp<span style={{ color: '#7c9a6e' }}>.</span>ai
+                        style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
+                        NextUp<span style={{ color: 'var(--accent)' }}>.</span>ai
                     </span>
                 </Link>
 
                 <div className="paper-card rounded-2xl p-8">
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold mb-2 tracking-tight"
-                            style={{ fontFamily: 'var(--font-heading)', color: '#2d2926' }}>Welcome Back</h1>
-                        <p className="text-sm" style={{ color: '#9e9790' }}>Continue your interview prep</p>
+                            style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>Welcome Back</h1>
+                        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Continue your interview prep</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="relative">
-                            <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#b8b2aa' }} />
+                            <Mail size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-light)' }} />
                             <input type="email" placeholder="Email Address" value={form.email}
                                 onChange={e => setForm({ ...form, email: e.target.value })}
                                 className="w-full rounded-xl pl-11 pr-4 py-3.5 text-sm focus:outline-none transition-all"
-                                style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#2d2926' }}
+                                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                                 onFocus={e => { e.target.style.borderColor = 'rgba(124,154,110,0.4)'; }}
-                                onBlur={e => { e.target.style.borderColor = '#e0dbd2'; }}
+                                onBlur={e => { e.target.style.borderColor = 'var(--border)'; }}
                             />
                         </div>
                         <div className="relative">
-                            <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#b8b2aa' }} />
+                            <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-light)' }} />
                             <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={form.password}
                                 onChange={e => setForm({ ...form, password: e.target.value })}
                                 className="w-full rounded-xl pl-11 pr-12 py-3.5 text-sm focus:outline-none transition-all"
-                                style={{ background: '#f5f1ea', border: '1px solid #e0dbd2', color: '#2d2926' }}
+                                style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
                                 onFocus={e => { e.target.style.borderColor = 'rgba(124,154,110,0.4)'; }}
-                                onBlur={e => { e.target.style.borderColor = '#e0dbd2'; }}
+                                onBlur={e => { e.target.style.borderColor = 'var(--border)'; }}
                             />
                             <button type="button" onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2" style={{ color: '#b8b2aa' }}>
+                                className="absolute right-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-light)' }}>
                                 {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                             </button>
                         </div>
                         <button type="submit" disabled={isLoading}
                             className="btn-tactile w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-white transition-all disabled:opacity-50"
-                            style={{ background: '#7c9a6e', boxShadow: '0 2px 12px rgba(124,154,110,0.15)' }}>
+                            style={{ background: 'var(--accent)', boxShadow: '0 2px 12px rgba(124,154,110,0.15)' }}>
                             {isLoading ? (
                                 <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
                             ) : (<>Sign In <ArrowRight size={15} /></>)}
@@ -91,13 +91,13 @@ export default function LoginPage() {
                     </form>
 
                     <div className="flex items-center gap-4 my-6">
-                        <div className="flex-1 h-px" style={{ background: '#e0dbd2' }} />
-                        <span className="text-xs" style={{ color: '#b8b2aa' }}>or</span>
-                        <div className="flex-1 h-px" style={{ background: '#e0dbd2' }} />
+                        <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+                        <span className="text-xs" style={{ color: 'var(--text-light)' }}>or</span>
+                        <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
                     </div>
-                    <p className="text-center text-sm" style={{ color: '#9e9790' }}>
+                    <p className="text-center text-sm" style={{ color: 'var(--text-muted)' }}>
                         Don&apos;t have an account?{' '}
-                        <Link href="/register" className="font-medium transition-colors" style={{ color: '#7c9a6e' }}>Create one free</Link>
+                        <Link href="/register" className="font-medium transition-colors" style={{ color: 'var(--accent)' }}>Create one free</Link>
                     </p>
                 </div>
             </motion.div>
